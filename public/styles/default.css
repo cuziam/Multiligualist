@@ -15,6 +15,7 @@
 }
 body {
   margin: 0;
+  font-family: "Open Sans", sans-serif;
 }
 header {
   display: flex;
@@ -55,7 +56,7 @@ header {
 #header-logo-text {
   color: var(--logo-default, #000);
   text-align: center;
-  font-family: Righteous;
+  font-family: "Righteous", sans-serif;
   font-size: 2rem;
   font-style: normal;
   font-weight: 400;
@@ -134,7 +135,6 @@ header {
 .select-text {
   color: var(--text-default, #0d0d0d);
   text-align: center;
-  font-family: Noto Sans;
   font-size: 1.5rem;
   font-style: normal;
   font-weight: 400;

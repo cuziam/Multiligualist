@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(transRoutes);
 
 app.use(function (error, req, res, next) {
-  res.status("500").render("500");
+  res.status(500).render("500");
 });
 
 app.listen(4788, () => console.log("listening on port 4788"));
