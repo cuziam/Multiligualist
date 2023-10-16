@@ -117,12 +117,26 @@ header {
   flex-shrink: 0;
 }
 
+.box-text {
+  resize: none;
+  box-sizing: border-box;
+  font-family: noto-sans, sans-serif;
+  padding: 1rem;
+  font-size: 1.5rem;
+
+  border-color: transparent;
+  color: var(--text-default);
+  background: var(--grid-background-default, #fafafa);
+}
+
+.box-text:focus {
+  outline: none;
+}
+
 #input-box .box-text {
   width: 37.5rem;
   height: 19rem;
   flex-shrink: 0;
-
-  background: var(--grid-background-default, #fafafa);
 }
 
 .select {
@@ -265,4 +279,9 @@ header {
   border-radius: 0.5rem;
   border: 2px solid var(--border-default, #d9d9d9);
   background: var(--box-disabled);
+}
+
+/* icons */
+.icon-expand:hover {
+  fill: var(--brand-second-color);
 }
