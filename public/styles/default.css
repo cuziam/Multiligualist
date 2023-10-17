@@ -1,3 +1,7 @@
+* {
+  font-family: "open sans", sans-serif;
+}
+
 :root {
   --background-default: #f5f5f5;
   --text-default: #0d0d0d;
@@ -157,12 +161,28 @@ header {
 
 .box-toolbar {
   display: flex;
-  box-sizing: border-box;
   width: 37.5rem;
   height: 3rem;
-  padding: 0.1875rem 0.5625rem 0.1875rem 31.4375rem;
+  padding: 0.25rem 31.5rem 0.25rem 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+
+  border-radius: 0rem 0rem 0.5rem 0.5rem;
+  border-top: 2px solid var(--border-default, #d9d9d9);
+  background: var(--grid-background-default, #fafafa);
+}
+
+#input-box-toolbar {
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  width: 37.5rem;
+  height: 3rem;
+  padding-left: 0px;
   justify-content: flex-end;
   align-items: center;
+  gap: 24.5rem;
   flex-shrink: 0;
 
   border-radius: 0rem 0rem 0.5rem 0.5rem;
@@ -170,10 +190,35 @@ header {
   background: var(--grid-background-default, #fafafa);
 }
 
+#btn-translate {
+  box-sizing: border-box;
+  display: flex;
+  width: 7rem;
+  height: 3rem;
+  padding: 0.8125rem 1.125rem 0.8125rem 1.1875rem;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+
+  border-radius: 0rem 0rem 0.5rem 0rem;
+  border: none;
+  border-left: 2px solid var(--border-default, #d9d9d9);
+  background: #295bf2;
+
+  color: #fff;
+
+  text-align: center;
+  font-family: Noto Sans;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
 .tooltips {
   display: flex;
   width: 5.5rem;
-  height: 2.625rem;
+  height: 2.5rem;
   justify-content: center;
   align-items: center;
   gap: 0.75rem;
@@ -282,6 +327,10 @@ header {
 }
 
 /* icons */
-.icon-expand:hover {
+svg:hover {
+  cursor: pointer;
+}
+
+svg:hover path {
   fill: var(--brand-second-color);
 }

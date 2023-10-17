@@ -4,6 +4,7 @@
       <div class="select">
         <div class="select-text">Korean</div>
         <svg
+          class="icon-func"
           xmlns="http://www.w3.org/2000/svg"
           width="40"
           height="40"
@@ -29,17 +30,32 @@
           </g>
         </svg>
       </div>
-      <img class="icon-swap" src="../public/styles/icons/icon-swap.svg" />
+      <svg
+        class="icon-func"
+        xmlns="http://www.w3.org/2000/svg"
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+        fill="none"
+      >
+        <path
+          d="M9.32 14.6666L4 20L9.32 25.3333V21.3333H18.6667V18.6666H9.32V14.6666ZM28 12L22.68 6.66663V10.6666H13.3333V13.3333H22.68V17.3333L28 12Z"
+          fill="#525252"
+        />
+      </svg>
     </div>
   </div>
-  <textarea
-    class="box-text"
-    type="text"
-    placeholder="Please enter what you want to translate"
-  ></textarea>
-  <div class="box-toolbar">
+  <form action="/" method="post">
+    <textarea
+      class="box-text"
+      type="text"
+      placeholder="Please enter what you want to translate..."
+    ></textarea>
+  </form>
+  <div id="input-box-toolbar">
     <div class="tooltips">
       <svg
+        class="icon-func"
         xmlns="http://www.w3.org/2000/svg"
         width="30"
         height="30"
@@ -52,6 +68,7 @@
         />
       </svg>
       <svg
+        class="icon-func"
         xmlns="http://www.w3.org/2000/svg"
         width="30"
         height="30"
@@ -64,6 +81,7 @@
         />
       </svg>
     </div>
+    <button id="btn-translate">Translate</button>
   </div>
   <div></div>
 </div>
