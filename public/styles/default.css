@@ -203,7 +203,7 @@ header {
   border-radius: 0rem 0rem 0.5rem 0rem;
   border: none;
   border-left: 2px solid var(--border-default, #d9d9d9);
-  background: #295bf2;
+  background: var(--brand-primary-color);
 
   color: #fff;
 
@@ -213,6 +213,11 @@ header {
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+}
+
+#btn-translate:hover {
+  cursor: pointer;
+  background: var(--brand-primary-color-fresh);
 }
 
 .tooltips {
@@ -327,10 +332,10 @@ header {
 }
 
 /* icons */
-svg:hover {
+.icon-func:hover {
   cursor: pointer;
 }
 
-svg:hover path {
+.icon-func:hover path {
   fill: var(--brand-second-color);
 }
