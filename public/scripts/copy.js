@@ -17,10 +17,10 @@ function copyText() {
   }
   navigator.clipboard.writeText(copiedText);
 }
+let tooltipIntervalId = null;
 
-function showTooltip() {
-  // 일정 시간이 지난 후에 작은 설명창을 표시
-  setTimeout(() => {
+function startTooltipInterval() {
+  tooltipIntervalId = setInterval(() => {
     // 아이콘 요소의 위치와 크기를 가져옴
     const iconRect = iconCopy.getBoundingClientRect();
 
@@ -33,13 +33,14 @@ function showTooltip() {
     tooltip.style.left = `${
       iconRect.left + iconRect.width / 2 - tooltip.offsetWidth / 2
     }px`;
-  }, 1000); // 1초 후에 작은 설명창을 표시
+  }, 100);
 }
 
-function hideTooltip() {
+function stopTooltipInterval() {
+  clearInterval(tooltipIntervalId);
   tooltip.style.display = "none";
 }
 
 iconCopy.addEventListener("click", copyText);
-iconCopy.addEventListener("mouseover", showTooltip);
-iconCopy.addEventListener("mouseout", hideTooltip);
+iconCopy.addEventListener("mouseover", startTooltipInterval);
+iconCopy.addEventListener("mouseout", stopTooltipInterval);
