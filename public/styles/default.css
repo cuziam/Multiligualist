@@ -339,3 +339,12 @@ header {
 .icon-func:hover path {
   fill: var(--brand-second-color);
 }
+
+.tooltip {
+  position: absolute;
+  z-index: 9999;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 5px;
+  font-size: 12px;
+}
