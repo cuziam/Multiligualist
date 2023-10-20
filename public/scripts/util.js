@@ -48,12 +48,13 @@ iconCopy.addEventListener("click", copyText);
 // iconCopy.addEventListener("mouseover", startTooltipInterval);
 // iconCopy.addEventListener("mouseout", stopTooltipInterval);
 
-//토글기능
+//toggle function
 iconToggleOnList.forEach((iconToggleOn) => {
   iconToggleOn.addEventListener("click", () => {
     const outputBoxes = iconToggleOn.closest("#output-boxes");
-    console.log(outputBoxes);
+
+    //1. Hide output-box-toggle-on
     iconToggleOn.closest(".output-box-toggle-on").classList.add("hidden");
-    //추가
+    //2. show output-box-toggle-off
   });
 });
