@@ -2,8 +2,16 @@ const iconCopy = document.querySelector("#icon-copy");
 const iconHistory = document.querySelector("#icon-history");
 const tooltip = document.querySelector(".tooltip");
 
-const iconToggleOnList = document.querySelectorAll("#icon-toggle-on");
-const iconToggleOffList = document.querySelectorAll("#icon-toggle-off");
+let iconToggleOnList = document.querySelectorAll("#icon-toggle-on");
+let iconToggleOffList = document.querySelectorAll("#icon-toggle-off");
+
+const outputBoxes = document.querySelector("#output-boxes");
+const outputBoxToggleOff = document
+  .querySelector(".output-box-toggle-off")
+  .cloneNode(true);
+const outputBoxToggleOn = document
+  .querySelector(".output-box-toggle-on")
+  .cloneNode(true);
 
 //copy이미지를 누르면 부모 요소 중에 box-text 클래스를 찾는다.
 //거기에 담긴 텍스트를 복사한다.
@@ -20,41 +28,83 @@ function copyText() {
   }
   navigator.clipboard.writeText(copiedText);
 }
-// let tooltipIntervalId = null;
-
-// function startTooltipInterval() {
-//   tooltipIntervalId = setInterval(() => {
-//     // 아이콘 요소의 위치와 크기를 가져옴
-//     const iconRect = iconCopy.getBoundingClientRect();
-
-//     // 작은 설명창의 내용을 설정
-//     tooltip.textContent = iconCopy.dataset.tooltip;
-
-//     // 작은 설명창을 표시하고, 아이콘 요소의 위치에 배치
-//     tooltip.style.display = "block";
-//     tooltip.style.top = `${iconRect.top - tooltip.offsetHeight}px`;
-//     tooltip.style.left = `${
-//       iconRect.left + iconRect.width / 2 - tooltip.offsetWidth / 2
-//     }px`;
-//   }, 100);
-// }
-
-// function stopTooltipInterval() {
-//   clearInterval(tooltipIntervalId);
-//   tooltip.style.display = "none";
-// }
 
 iconCopy.addEventListener("click", copyText);
-// iconCopy.addEventListener("mouseover", startTooltipInterval);
-// iconCopy.addEventListener("mouseout", stopTooltipInterval);
 
-//toggle function
+const toggleOff = (iconToggleOn) => {
+  const outputBoxes = iconToggleOn.closest("#output-boxes");
+  const closestOutputBoxToggleOn = iconToggleOn.closest(
+    ".output-box-toggle-on"
+  );
+
+  // Search closest lang-tool-select of output-box-toggle-on
+  const prevLangToolSelect = closestOutputBoxToggleOn.querySelector(
+    ".language-tool-select"
+  );
+
+  // Hide closest output-box-toggle-on
+  closestOutputBoxToggleOn.classList.add("hidden");
+
+  // load new output-box-toggle-off & change contents in output-box-toggle-off to match output-box-toggle-on
+  const newOutputBoxToggleOff = outputBoxToggleOff.cloneNode(true);
+  const elementToRemove = newOutputBoxToggleOff.querySelector(
+    ".language-tool-select"
+  );
+  newOutputBoxToggleOff
+    .querySelector(".output-lang-select")
+    .replaceChild(prevLangToolSelect, elementToRemove);
+
+  // change previous output-box-toggle-on to new output-box-toggle-off
+  outputBoxes.replaceChild(newOutputBoxToggleOff, closestOutputBoxToggleOn);
+
+  // update iconToggleOnList and iconToggleOffList
+  const newIconToggleOnList = outputBoxes.querySelectorAll("#icon-toggle-on");
+  const newIconToggleOffList = outputBoxes.querySelectorAll("#icon-toggle-off");
+  iconToggleOnList = newIconToggleOnList;
+  iconToggleOffList = newIconToggleOffList;
+};
+
 iconToggleOnList.forEach((iconToggleOn) => {
   iconToggleOn.addEventListener("click", () => {
-    const outputBoxes = iconToggleOn.closest("#output-boxes");
+    toggleOff(iconToggleOn);
+  });
+});
 
-    //1. Hide output-box-toggle-on
-    iconToggleOn.closest(".output-box-toggle-on").classList.add("hidden");
-    //2. show output-box-toggle-off
+const toggleOn = (iconToggleOff) => {
+  const outputBoxes = iconToggleOff.closest("#output-boxes");
+  const closestOutputBoxToggleOff = iconToggleOff.closest(
+    ".output-box-toggle-off"
+  );
+
+  // Search closest lang-tool-select of output-box-toggle-off
+  const prevLangToolSelect = closestOutputBoxToggleOff.querySelector(
+    ".language-tool-select"
+  );
+
+  // Hide closest output-box-toggle-off
+  closestOutputBoxToggleOff.classList.add("hidden");
+
+  // load new output-box-toggle-on & change contents in output-box-toggle-on to match output-box-toggle-off
+  const newOutputBoxToggleOn = outputBoxToggleOn.cloneNode(true);
+  const elementToRemove = newOutputBoxToggleOn.querySelector(
+    ".language-tool-select"
+  );
+  newOutputBoxToggleOn
+    .querySelector(".output-lang-select")
+    .replaceChild(prevLangToolSelect, elementToRemove);
+
+  // change previous output-box-toggle-off to new output-box-toggle-on
+  outputBoxes.replaceChild(newOutputBoxToggleOn, closestOutputBoxToggleOff);
+
+  // update iconToggleOnList and iconToggleOffList
+  const newIconToggleOnList = outputBoxes.querySelectorAll("#icon-toggle-on");
+  const newIconToggleOffList = outputBoxes.querySelectorAll("#icon-toggle-off");
+  iconToggleOnList = newIconToggleOnList;
+  iconToggleOffList = newIconToggleOffList;
+};
+
+iconToggleOffList.forEach((iconToggleOff) => {
+  iconToggleOff.addEventListener("click", () => {
+    toggleOn(iconToggleOff);
   });
 });
