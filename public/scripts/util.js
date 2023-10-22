@@ -13,9 +13,8 @@ const outputBoxToggleOn = document
   .querySelector(".output-box-toggle-on")
   .cloneNode(true);
 
-//copy이미지를 누르면 부모 요소 중에 box-text 클래스를 찾는다.
-//거기에 담긴 텍스트를 복사한다.
 function copyText() {
+  // Copy text to clipboard
   const boxTextElement =
     iconCopy.closest("#input-box").querySelector(".box-text") ||
     iconCopy.closest(".output-box-toggle-on").querySelector(".box-text");
@@ -29,8 +28,7 @@ function copyText() {
   navigator.clipboard.writeText(copiedText);
 }
 
-iconCopy.addEventListener("click", copyText);
-
+// Toggle on/off
 const toggleOff = (iconToggleOn) => {
   const outputBoxes = iconToggleOn.closest("#output-boxes");
   const closestOutputBoxToggleOn = iconToggleOn.closest(
@@ -42,11 +40,15 @@ const toggleOff = (iconToggleOn) => {
     ".language-tool-select"
   );
 
-  // Hide closest output-box-toggle-on
-  closestOutputBoxToggleOn.classList.add("hidden");
-
-  // load new output-box-toggle-off & change contents in output-box-toggle-off to match output-box-toggle-on
+  // load new output-box-toggle-off
   const newOutputBoxToggleOff = outputBoxToggleOff.cloneNode(true);
+  // add event listener to icon-toggle-off
+  newOutputBoxToggleOff
+    .querySelector("#icon-toggle-off")
+    .addEventListener("click", () => {
+      toggleOn(newOutputBoxToggleOff);
+    });
+  // change contents in output-box-toggle-off to match output-box-toggle-on
   const elementToRemove = newOutputBoxToggleOff.querySelector(
     ".language-tool-select"
   );
@@ -64,12 +66,6 @@ const toggleOff = (iconToggleOn) => {
   iconToggleOffList = newIconToggleOffList;
 };
 
-iconToggleOnList.forEach((iconToggleOn) => {
-  iconToggleOn.addEventListener("click", () => {
-    toggleOff(iconToggleOn);
-  });
-});
-
 const toggleOn = (iconToggleOff) => {
   const outputBoxes = iconToggleOff.closest("#output-boxes");
   const closestOutputBoxToggleOff = iconToggleOff.closest(
@@ -81,11 +77,13 @@ const toggleOn = (iconToggleOff) => {
     ".language-tool-select"
   );
 
-  // Hide closest output-box-toggle-off
-  closestOutputBoxToggleOff.classList.add("hidden");
-
   // load new output-box-toggle-on & change contents in output-box-toggle-on to match output-box-toggle-off
   const newOutputBoxToggleOn = outputBoxToggleOn.cloneNode(true);
+  newOutputBoxToggleOn
+    .querySelector("#icon-toggle-on")
+    .addEventListener("click", () => {
+      toggleOff(newOutputBoxToggleOn);
+    });
   const elementToRemove = newOutputBoxToggleOn.querySelector(
     ".language-tool-select"
   );
@@ -102,6 +100,14 @@ const toggleOn = (iconToggleOff) => {
   iconToggleOnList = newIconToggleOnList;
   iconToggleOffList = newIconToggleOffList;
 };
+
+iconCopy.addEventListener("click", copyText);
+
+iconToggleOnList.forEach((iconToggleOn) => {
+  iconToggleOn.addEventListener("click", () => {
+    toggleOff(iconToggleOn);
+  });
+});
 
 iconToggleOffList.forEach((iconToggleOff) => {
   iconToggleOff.addEventListener("click", () => {
