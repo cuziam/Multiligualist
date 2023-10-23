@@ -58,12 +58,6 @@ const toggleOff = (iconToggleOn) => {
 
   // change previous output-box-toggle-on to new output-box-toggle-off
   outputBoxes.replaceChild(newOutputBoxToggleOff, closestOutputBoxToggleOn);
-
-  // update iconToggleOnList and iconToggleOffList
-  const newIconToggleOnList = outputBoxes.querySelectorAll("#icon-toggle-on");
-  const newIconToggleOffList = outputBoxes.querySelectorAll("#icon-toggle-off");
-  iconToggleOnList = newIconToggleOnList;
-  iconToggleOffList = newIconToggleOffList;
 };
 
 const toggleOn = (iconToggleOff) => {
@@ -93,12 +87,6 @@ const toggleOn = (iconToggleOff) => {
 
   // change previous output-box-toggle-off to new output-box-toggle-on
   outputBoxes.replaceChild(newOutputBoxToggleOn, closestOutputBoxToggleOff);
-
-  // update iconToggleOnList and iconToggleOffList
-  const newIconToggleOnList = outputBoxes.querySelectorAll("#icon-toggle-on");
-  const newIconToggleOffList = outputBoxes.querySelectorAll("#icon-toggle-off");
-  iconToggleOnList = newIconToggleOnList;
-  iconToggleOffList = newIconToggleOffList;
 };
 
 iconCopy.addEventListener("click", copyText);
