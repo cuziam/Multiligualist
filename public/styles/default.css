@@ -332,6 +332,7 @@ header {
 }
 
 /* icons */
+
 .icon-func:hover {
   cursor: pointer;
 }
@@ -354,5 +355,26 @@ header {
 }
 
 .show {
+  display: block;
+}
+
+#icon-toggle-on:hover path {
+  fill: #81d6a5;
+}
+
+#icon-toggle-off:hover path {
+  fill: #eb9e9e;
+}
+
+svg title {
+  position: absolute;
+  z-index: 9999;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 5px;
+  font-size: 12px;
+  display: none;
+}
+svg:hover title {
   display: block;
 }

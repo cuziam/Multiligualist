@@ -1,9 +1,10 @@
 const iconCopy = document.querySelector("#icon-copy");
 const iconHistory = document.querySelector("#icon-history");
-const tooltip = document.querySelector(".tooltip");
 
 let iconToggleOnList = document.querySelectorAll("#icon-toggle-on");
 let iconToggleOffList = document.querySelectorAll("#icon-toggle-off");
+const iconToggleList = document.querySelectorAll(".icon-toggle");
+const iconFuncList = document.querySelectorAll(".icon-func");
 
 const outputBoxes = document.querySelector("#output-boxes");
 const outputBoxToggleOff = document
@@ -89,7 +90,30 @@ const toggleOn = (iconToggleOff) => {
   outputBoxes.replaceChild(newOutputBoxToggleOn, closestOutputBoxToggleOff);
 };
 
+function zoomWindow(window) {
+  let width = window.innerWidth;
+
+  if (width >= 2560 && width < 3840) {
+    // QHD 해상도
+    document.body.style.zoom = "150%"; // 150%로 확대
+  } else if (width >= 3840) {
+    // 4K 해상도
+    document.body.style.zoom = "200%"; // 200%로 확대
+  }
+}
+
+//event listeners
+window.addEventListener("load", () => {
+  zoomWindow(window);
+});
+
 iconCopy.addEventListener("click", copyText);
+
+iconFuncList.forEach((iconFunc) => {
+  iconFunc.addEventListener("mouseover", () => {
+    console.log("iconFunc mouseover");
+  });
+});
 
 iconToggleOnList.forEach((iconToggleOn) => {
   iconToggleOn.addEventListener("click", () => {
