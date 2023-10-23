@@ -403,4 +403,17 @@ svg:hover title {
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+
+  color: var(--text-default, #0d0d0d);
+  text-align: center;
+  font-family: Inter;
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+#language:hover {
+  color: var(--brand-second-color);
+  text-decoration: underline;
 }
