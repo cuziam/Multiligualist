@@ -1,6 +1,10 @@
 const iconCopy = document.querySelector("#icon-copy");
 const iconHistory = document.querySelector("#icon-history");
 
+const iconLanguageSelectList = document.querySelectorAll(
+  ".icon-language-select"
+);
+
 let iconToggleOnList = document.querySelectorAll("#icon-toggle-on");
 let iconToggleOffList = document.querySelectorAll("#icon-toggle-off");
 const iconToggleList = document.querySelectorAll(".icon-toggle");
@@ -102,9 +106,17 @@ function zoomWindow(window) {
   }
 }
 
+function showDropdown(iconLanguageSelect) {}
+
 //event listeners
 window.addEventListener("load", () => {
   zoomWindow(window);
+});
+
+iconLanguageSelectList.forEach((iconLanguageSelect) => {
+  iconLanguageSelect.addEventListener("click", () => {
+    showDropdown(iconLanguageSelect);
+  });
 });
 
 iconCopy.addEventListener("click", copyText);
