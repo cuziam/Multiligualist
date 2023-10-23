@@ -12,6 +12,11 @@
     />
     <script src="../public/scripts/util.js" defer></script>
     <title>Translators</title>
+    <link
+      rel="icon"
+      href="/public/styles/icons/favicon.ico"
+      type="image/x-icon"
+    />
   </head>
   <body>
     <%- include('include/header') %>
@@ -23,7 +28,8 @@
         include('include/output-box-toggle-off') %>
       </div>
     </main>
-    <div class="tooltip"></div>
+    <%- include('include/dropdown-languages') %> <%-
+    include('include/dropdown-Translators') %>
     <footer></footer>
   </body>
 </html>

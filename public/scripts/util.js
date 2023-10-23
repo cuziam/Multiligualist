@@ -1,13 +1,25 @@
 const iconCopy = document.querySelector("#icon-copy");
 const iconHistory = document.querySelector("#icon-history");
-const tooltip = document.querySelector(".tooltip");
 
-const iconToggleOnList = document.querySelectorAll("#icon-toggle-on");
-const iconToggleOffList = document.querySelectorAll("#icon-toggle-off");
+const iconLanguageSelectList = document.querySelectorAll(
+  ".icon-language-select"
+);
 
-//copy이미지를 누르면 부모 요소 중에 box-text 클래스를 찾는다.
-//거기에 담긴 텍스트를 복사한다.
+let iconToggleOnList = document.querySelectorAll("#icon-toggle-on");
+let iconToggleOffList = document.querySelectorAll("#icon-toggle-off");
+const iconToggleList = document.querySelectorAll(".icon-toggle");
+const iconFuncList = document.querySelectorAll(".icon-func");
+
+const outputBoxes = document.querySelector("#output-boxes");
+const outputBoxToggleOff = document
+  .querySelector(".output-box-toggle-off")
+  .cloneNode(true);
+const outputBoxToggleOn = document
+  .querySelector(".output-box-toggle-on")
+  .cloneNode(true);
+
 function copyText() {
+  // Copy text to clipboard
   const boxTextElement =
     iconCopy.closest("#input-box").querySelector(".box-text") ||
     iconCopy.closest(".output-box-toggle-on").querySelector(".box-text");
@@ -20,41 +32,109 @@ function copyText() {
   }
   navigator.clipboard.writeText(copiedText);
 }
-// let tooltipIntervalId = null;
 
-// function startTooltipInterval() {
-//   tooltipIntervalId = setInterval(() => {
-//     // 아이콘 요소의 위치와 크기를 가져옴
-//     const iconRect = iconCopy.getBoundingClientRect();
+// Toggle on/off
+const toggleOff = (iconToggleOn) => {
+  const outputBoxes = iconToggleOn.closest("#output-boxes");
+  const closestOutputBoxToggleOn = iconToggleOn.closest(
+    ".output-box-toggle-on"
+  );
 
-//     // 작은 설명창의 내용을 설정
-//     tooltip.textContent = iconCopy.dataset.tooltip;
+  // Search closest lang-tool-select of output-box-toggle-on
+  const prevLangToolSelect = closestOutputBoxToggleOn.querySelector(
+    ".language-tool-select"
+  );
 
-//     // 작은 설명창을 표시하고, 아이콘 요소의 위치에 배치
-//     tooltip.style.display = "block";
-//     tooltip.style.top = `${iconRect.top - tooltip.offsetHeight}px`;
-//     tooltip.style.left = `${
-//       iconRect.left + iconRect.width / 2 - tooltip.offsetWidth / 2
-//     }px`;
-//   }, 100);
-// }
+  // load new output-box-toggle-off
+  const newOutputBoxToggleOff = outputBoxToggleOff.cloneNode(true);
+  // add event listener to icon-toggle-off
+  newOutputBoxToggleOff
+    .querySelector("#icon-toggle-off")
+    .addEventListener("click", () => {
+      toggleOn(newOutputBoxToggleOff);
+    });
+  // change contents in output-box-toggle-off to match output-box-toggle-on
+  const elementToRemove = newOutputBoxToggleOff.querySelector(
+    ".language-tool-select"
+  );
+  newOutputBoxToggleOff
+    .querySelector(".output-lang-select")
+    .replaceChild(prevLangToolSelect, elementToRemove);
 
-// function stopTooltipInterval() {
-//   clearInterval(tooltipIntervalId);
-//   tooltip.style.display = "none";
-// }
+  // change previous output-box-toggle-on to new output-box-toggle-off
+  outputBoxes.replaceChild(newOutputBoxToggleOff, closestOutputBoxToggleOn);
+};
+
+const toggleOn = (iconToggleOff) => {
+  const outputBoxes = iconToggleOff.closest("#output-boxes");
+  const closestOutputBoxToggleOff = iconToggleOff.closest(
+    ".output-box-toggle-off"
+  );
+
+  // Search closest lang-tool-select of output-box-toggle-off
+  const prevLangToolSelect = closestOutputBoxToggleOff.querySelector(
+    ".language-tool-select"
+  );
+
+  // load new output-box-toggle-on & change contents in output-box-toggle-on to match output-box-toggle-off
+  const newOutputBoxToggleOn = outputBoxToggleOn.cloneNode(true);
+  newOutputBoxToggleOn
+    .querySelector("#icon-toggle-on")
+    .addEventListener("click", () => {
+      toggleOff(newOutputBoxToggleOn);
+    });
+  const elementToRemove = newOutputBoxToggleOn.querySelector(
+    ".language-tool-select"
+  );
+  newOutputBoxToggleOn
+    .querySelector(".output-lang-select")
+    .replaceChild(prevLangToolSelect, elementToRemove);
+
+  // change previous output-box-toggle-off to new output-box-toggle-on
+  outputBoxes.replaceChild(newOutputBoxToggleOn, closestOutputBoxToggleOff);
+};
+
+function zoomWindow(window) {
+  let width = window.innerWidth;
+
+  if (width >= 2560 && width < 3840) {
+    // QHD 해상도
+    document.body.style.zoom = "150%"; // 150%로 확대
+  } else if (width >= 3840) {
+    // 4K 해상도
+    document.body.style.zoom = "200%"; // 200%로 확대
+  }
+}
+
+function showDropdown(iconLanguageSelect) {}
+
+//event listeners
+window.addEventListener("load", () => {
+  zoomWindow(window);
+});
+
+iconLanguageSelectList.forEach((iconLanguageSelect) => {
+  iconLanguageSelect.addEventListener("click", () => {
+    showDropdown(iconLanguageSelect);
+  });
+});
 
 iconCopy.addEventListener("click", copyText);
-// iconCopy.addEventListener("mouseover", startTooltipInterval);
-// iconCopy.addEventListener("mouseout", stopTooltipInterval);
 
-//toggle function
+iconFuncList.forEach((iconFunc) => {
+  iconFunc.addEventListener("mouseover", () => {
+    console.log("iconFunc mouseover");
+  });
+});
+
 iconToggleOnList.forEach((iconToggleOn) => {
   iconToggleOn.addEventListener("click", () => {
-    const outputBoxes = iconToggleOn.closest("#output-boxes");
+    toggleOff(iconToggleOn);
+  });
+});
 
-    //1. Hide output-box-toggle-on
-    iconToggleOn.closest(".output-box-toggle-on").classList.add("hidden");
-    //2. show output-box-toggle-off
+iconToggleOffList.forEach((iconToggleOff) => {
+  iconToggleOff.addEventListener("click", () => {
+    toggleOn(iconToggleOff);
   });
 });

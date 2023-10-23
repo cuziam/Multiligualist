@@ -332,6 +332,7 @@ header {
 }
 
 /* icons */
+
 .icon-func:hover {
   cursor: pointer;
 }
@@ -351,4 +352,68 @@ header {
 
 .hidden {
   display: none;
+}
+
+.show {
+  display: block;
+}
+
+#icon-toggle-on:hover path {
+  fill: #81d6a5;
+}
+
+#icon-toggle-off:hover path {
+  fill: #eb9e9e;
+}
+
+svg title {
+  position: absolute;
+  z-index: 9999;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 5px;
+  font-size: 12px;
+  display: none;
+}
+svg:hover title {
+  display: block;
+}
+
+/* dropdown menu */
+.dropdown {
+  position: relative;
+  display: flex; /* Hidden by default */
+  width: 37.5rem;
+  height: 19rem;
+  padding: 1rem;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 2rem 7.5rem;
+  flex-wrap: wrap;
+
+  border: 2px solid var(--border-default, #d9d9d9);
+  background: var(--grid-background-default, #fafafa);
+}
+
+#language {
+  display: flex;
+  width: 5.625rem;
+  height: 1.8125rem;
+  padding: 0rem 0.3125rem;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+
+  color: var(--text-default, #0d0d0d);
+  text-align: center;
+  font-family: Inter;
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+#language:hover {
+  color: var(--brand-second-color);
+  text-decoration: underline;
 }
