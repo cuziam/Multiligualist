@@ -150,7 +150,7 @@ header {
   align-items: center;
 }
 
-.choosen-lang {
+.chosen-lang {
   color: var(--text-default, #0d0d0d);
   text-align: center;
   font-size: 1.5rem;
@@ -159,7 +159,7 @@ header {
   line-height: normal;
 }
 
-.choosen-tool {
+.chosen-tool {
   color: var(--text-default, #0d0d0d);
   text-align: center;
   font-size: 1.5rem;
@@ -431,4 +431,9 @@ svg:hover title {
   color: var(--brand-second-color);
   text-decoration: underline;
   cursor: pointer;
+}
+
+.lang-dropdown div.highlighted-language {
+  color: var(--brand-second-color);
+  font-weight: bold;
 }
