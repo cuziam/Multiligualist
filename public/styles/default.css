@@ -327,7 +327,7 @@ header {
 
 .output-box-toggle-off {
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: none;
   display: flex;
   width: 37.5rem;
   height: 3rem;
@@ -391,10 +391,10 @@ svg:hover title {
 /* dropdown menu */
 .lang-dropdown,
 .tool-dropdown {
-  display: flex; /* Hidden by default */
+  display: none; /* Hidden by default */
   box-sizing: border-box;
   width: 37.5rem;
-  height: 19rem;
+  height: 14rem;
   padding: 1rem;
   align-items: flex-start;
   align-content: flex-start;
@@ -433,7 +433,8 @@ svg:hover title {
   cursor: pointer;
 }
 
-.lang-dropdown div.highlighted-language {
+.lang-dropdown div.highlighted-language,
+.tool-dropdown div.highlighted-tool {
   color: var(--brand-second-color);
   font-weight: bold;
 }
