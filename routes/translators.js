@@ -58,5 +58,15 @@ router.get("/google", async (req, res) => {
   }
 });
 
-//
+const hostUrl = "api-frameElement.deepl.com";
+const key = "8637ebc3-08db-db43-0a27-9499681254b0:fx";
+router.get("deepl", async (req, res) => {
+  const hostUrl = "api-frameElement.deepl.com";
+  const options = {
+    method: "POST",
+    url: hostUrl,
+  };
+  data = "text=Hello%2C%20world!&target_lang=DE";
+  //
+});
 module.exports = router;
