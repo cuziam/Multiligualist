@@ -1,4 +1,5 @@
 <div id="input-box">
+  <form action="/translate" method="post">
   <div class="box-input-lang-select">
     <div class="input-lang-select">
       <%- include('icon-select') %>
@@ -18,8 +19,9 @@
         <title>Language Change</title>
       </svg>
     </div>
+  </form>
   </div>
-  <form action="/" method="post">
+  
     <textarea
       id="input-box-textarea"
       class="box-text"
