@@ -58,15 +58,22 @@ router.get("/google", async (req, res) => {
   }
 });
 
-const hostUrl = "api-frameElement.deepl.com";
-const key = "8637ebc3-08db-db43-0a27-9499681254b0:fx";
-router.get("deepl", async (req, res) => {
-  const hostUrl = "api-frameElement.deepl.com";
-  const options = {
-    method: "POST",
-    url: hostUrl,
-  };
-  data = "text=Hello%2C%20world!&target_lang=DE";
-  //
+const deepl = require("deepl-node");
+
+const authKey = "8637ebc3-08db-db43-0a27-9499681254b0:fx";
+const translator = new deepl.Translator(authKey);
+
+router.get("/deepl", async (req, res) => {
+  try {
+    const responseText = await translator.translateText(
+      "Hello, world!",
+      "EN",
+      "DE"
+    );
+    res.status(200).json(responseText);
+  } catch {
+    console.log("error:", error.response ? error.response.status : error);
+    res.status(error.response ? error.response.status : 500).end();
+  }
 });
 module.exports = router;
