@@ -1,9 +1,20 @@
 const express = require("express");
 const router = express.Router();
+
+const { EventEmitter } = require("events");
+
 const axios = require("axios");
 
 router.get("/", (req, res) => {
   res.render("landing-page");
+});
+
+const translationEvents = new EventEmitter();
+const results = [];
+
+translationEvents.on("translation", (result) => {
+  results.push(result);
+  console.log(results);
 });
 
 const errorHandling = async function errorHandling(promise, error) {
@@ -30,6 +41,7 @@ const translatePapago = async function (srcText, srcLang, targetLang) {
     data: `source=ko&target=en&text=${encodeURIComponent(srcText)}`,
   };
   const response = await axios(options);
+  translationEvents.emit("translation", "papago");
   return response.data;
 };
 
@@ -48,6 +60,7 @@ const translateGoogle = async function (srcText, srcLang, targetLang) {
   };
 
   const [response] = await translationClient.translateText(request);
+  translationEvents.emit("translation", "google");
   return response;
 };
 
@@ -57,18 +70,18 @@ const translator = new deepl.Translator(authKey);
 
 const translateDeepl = async function (srcText, srcLang, targetLang) {
   const response = await translator.translateText(srcText, "ko", "en-us");
+  translationEvents.emit("translation", "deepl");
   return response;
 };
 
 router.get("/translate", async (req, res) => {
-  const response1 = await translatePapago("안녕하세요", "ko", "en");
-  const response2 = await translateGoogle("안녕하세요 여러분!", "ko", "en");
-  const response3 = await translateDeepl(
-    "안녕하세요 여러분 만나서 반갑습니다.",
-    "ko",
-    "en"
-  );
-  res.json({ response1, response2, response3 });
+  const params = ["안녕 이것들아!", "srcLang", "targetLang"];
+  await Promise.all([
+    translatePapago(...params),
+    translateGoogle(...params),
+    translateDeepl(...params),
+  ]);
+  res.json(results);
 });
 
 // const srcText = req.query.srcText;
