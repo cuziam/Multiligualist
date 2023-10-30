@@ -88,4 +88,6 @@ module.exports = {
   translatePapago,
   translateGoogle,
   translateDeepl,
+  errors,
+  results,
 };

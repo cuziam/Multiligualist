@@ -4,12 +4,16 @@ const {
   translatePapago,
   translateGoogle,
   translateDeepl,
+  errors,
+  results,
 } = require("../get-response/get-api-response");
 
 router.get("/", (req, res) => {
   res.render("landing-page");
 });
 
+//수정할 내용: 라우팅 경로, params를 req.body에서 받아오기, 이벤트 함수로직을 html렌더링을 하는 방향으로 수정
+//  에러발생 시 에러메시지를 json이 아니라 html페이지로 렌더링
 router.get("/translate", async (req, res) => {
   //아래 부분을 수정해야함
   const params = ["안녕 이것들아!", "srcLang", "targetLang"];
@@ -24,18 +28,4 @@ router.get("/translate", async (req, res) => {
   res.json(results);
 });
 
-// const srcText = req.query.srcText;
-// const srcLang = req.query.srcLang;
-// const targetLang = req.query.targetLang;
-// const translator = req.query.translator;
-
-// if (translator === "papago") {
-//   translatePapago(srcText, srcLang, targetLang);
-// } else if (translator === "google") {
-//   translateGoogle(srcText, srcLang, targetLang);
-// } else if (translator === "deepl") {
-//   translateDeepl(srcText, srcLang, targetLang);
-// } else {
-//   res.status(400).end();
-// }
 module.exports = router;
