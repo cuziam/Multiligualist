@@ -26,6 +26,7 @@ router.get("/translate", async (req, res) => {
     return res.status(500).json({ results, errors });
   }
   res.json(results);
+  results.length = 0;
 });
 
 module.exports = router;

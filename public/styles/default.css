@@ -393,6 +393,10 @@ svg:hover title {
 .tool-dropdown {
   display: none; /* Hidden by default */
   box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+
   width: 37.5rem;
   height: 14rem;
   padding: 1rem;
@@ -433,8 +437,8 @@ svg:hover title {
   cursor: pointer;
 }
 
-.lang-dropdown div.highlighted-language,
-.tool-dropdown div.highlighted-tool {
+.lang-dropdown div.highlighted,
+.tool-dropdown div.highlighted {
   color: var(--brand-second-color);
   font-weight: bold;
 }
