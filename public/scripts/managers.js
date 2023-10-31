@@ -4,6 +4,19 @@ class UiManager {
     this.currentDropdown = null;
   }
 
+  // zoom window along with screen resolution
+  zoomWindow(window) {
+    let width = window.innerWidth;
+
+    if (width >= 2560 && width < 3840) {
+      // QHD resolution
+      document.body.style.zoom = "150%"; // zoom 150%
+    } else if (width >= 3840) {
+      // 4K resolution
+      document.body.style.zoom = "200%"; // zoom 200%
+    }
+  }
+
   showDropdown(iconSelect, configIndex, isLanguage) {
     const dropdownClass = isLanguage ? "lang-dropdown" : "tool-dropdown";
     const chosenClass = isLanguage ? "chosen-lang" : "chosen-tool";
@@ -154,6 +167,12 @@ const stateManager = new StateManager();
 const uiManager = new UiManager(stateManager);
 
 // 이벤트 리스너 연결
+
+//main event listeners
+window.addEventListener("load", () => {
+  uiManager.zoomWindow(window);
+});
+
 const iconLanguageSelectList = document.querySelectorAll(
   ".icon-language-select"
 );
