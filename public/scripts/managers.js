@@ -1,4 +1,4 @@
-class DropdownManager {
+class UiManager {
   constructor(stateManager) {
     this.stateManager = stateManager;
     this.currentDropdown = null;
@@ -50,8 +50,47 @@ class DropdownManager {
           updateKey,
           optionElement.textContent
         );
+        console.log(this.stateManager.getState());
       });
     });
+  }
+
+  // Toggle on/off
+  toggleSwitch(iconToggle, configIndex) {
+    const outputBoxes = iconToggle.closest("#output-boxes");
+    const isToggleOn = iconToggle.closest(".output-box-toggle-on");
+    const closestOutputBox = isToggleOn
+      ? iconToggle.closest(".output-box-toggle-on")
+      : iconToggle.closest(".output-box-toggle-off");
+
+    // 상태 업데이트
+    const newState = isToggleOn ? "off" : "on";
+    this.stateManager.updateState(configIndex, "state", newState);
+
+    // Search closest lang-tool-select of closest output box(기존 선택 정보를 담음)
+    const prevLangToolSelect = closestOutputBox.querySelector(
+      ".language-tool-select"
+    );
+
+    // load new output box & change contents to match closest output box
+    const newOutputBox = isToggleOn
+      ? outputBoxToggleOff.cloneNode(true)
+      : outputBoxToggleOn.cloneNode(true);
+
+    newOutputBox
+      .querySelector("#icon-toggle-" + (isToggleOn ? "off" : "on"))
+      .addEventListener("click", () => {
+        this.toggleSwitch(newOutputBox, configIndex);
+      });
+
+    const elementToRemove = newOutputBox.querySelector(".language-tool-select");
+    newOutputBox
+      .querySelector(".output-lang-select")
+      .replaceChild(prevLangToolSelect, elementToRemove);
+
+    // change previous closest output box to new output box
+    outputBoxes.replaceChild(newOutputBox, closestOutputBox);
+    console.log(stateManager.getState());
   }
 }
 
@@ -112,7 +151,7 @@ class StateManager {
 }
 
 const stateManager = new StateManager();
-const dropdownManager = new DropdownManager(stateManager);
+const uiManager = new UiManager(stateManager);
 
 // 이벤트 리스너 연결
 const iconLanguageSelectList = document.querySelectorAll(
@@ -124,12 +163,22 @@ const iconTranslatorSelectList = document.querySelectorAll(
 
 iconLanguageSelectList.forEach((icon, index) => {
   icon.addEventListener("click", () => {
-    dropdownManager.showDropdown(icon, index, true);
+    uiManager.showDropdown(icon, index, true);
   });
 });
 
 iconTranslatorSelectList.forEach((icon, index) => {
   icon.addEventListener("click", () => {
-    dropdownManager.showDropdown(icon, index, false);
+    uiManager.showDropdown(icon, index, false);
+  });
+});
+
+const iconToggles = document.querySelectorAll(
+  "#icon-toggle-on, #icon-toggle-off"
+);
+
+iconToggles.forEach((iconToggle, idx) => {
+  iconToggle.addEventListener("click", () => {
+    uiManager.toggleSwitch(iconToggle, idx);
   });
 });
