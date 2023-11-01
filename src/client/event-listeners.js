@@ -7,20 +7,27 @@ const uiManager = new UiManager(stateManager);
 const ajaxManager = new AjaxManager(stateManager);
 
 // 이벤트 리스너 연결
-
-//main event listeners
+//window event listeners
 window.addEventListener("load", () => {
   uiManager.zoomWindow(window);
 });
 
+const inputIconLanguageSelect = document.querySelector(
+  "#input-box .icon-language-select"
+);
 const iconLanguageSelectList = document.querySelectorAll(
-  ".icon-language-select"
+  ".output-box-toggle-on .icon-language-select, .output-box-toggle-off .icon-language-select"
 );
 const iconTranslatorSelectList = document.querySelectorAll(
   ".icon-translator-select"
 );
 
-//이 부분 버그 많다... 수정할 것
+//dropdown event listeners
+//input-box에 있는 icon은 index가 null이 되고, 나머지는 차례대로 index가 0, 1, 2, 3, 4, 5, 6, 7, 8, 9가 된다.
+//코드가 마음에 안 듬.
+inputIconLanguageSelect.addEventListener("click", () => {
+  uiManager.showDropdown(inputIconLanguageSelect, null, true);
+});
 iconLanguageSelectList.forEach((icon, index) => {
   icon.addEventListener("click", () => {
     uiManager.showDropdown(icon, index, true);
@@ -33,6 +40,7 @@ iconTranslatorSelectList.forEach((icon, index) => {
   });
 });
 
+//toggle switch event listeners
 const iconToggles = document.querySelectorAll(
   "#icon-toggle-on, #icon-toggle-off"
 );
@@ -49,7 +57,7 @@ iconCopyList.forEach((iconCopy) => {
     util.copyText(iconCopy);
   });
 });
-
+//input-box event listeners
 const btnTranslate = document.querySelector("#btn-translate");
 btnTranslate.addEventListener("click", () => {
   ajaxManager.translate();

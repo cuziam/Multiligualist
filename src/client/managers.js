@@ -75,7 +75,7 @@ class UiManager {
     const chosenItemElement = iconSelect.parentNode.querySelector(
       `.${chosenClass}`
     );
-    const chosenItem = chosenItemElement.textContent;
+    const chosenItem = chosenItemElement.textContent.replace(" ", "-"); //ex) google translate => google-translate
     const originalDropdown = document.querySelector(`.${dropdownClass}`);
     const dropdown = originalDropdown.cloneNode(true);
 
