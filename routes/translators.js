@@ -6,7 +6,7 @@ const {
   translateDeepl,
   errors,
   results,
-} = require("../get-response/get-api-response");
+} = require("../src/server/get-api-response");
 
 router.get("/", (req, res) => {
   res.render("landing-page");
