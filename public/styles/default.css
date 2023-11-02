@@ -300,7 +300,6 @@ header {
   justify-content: center;
   align-items: flex-start;
   gap: 17.19144rem;
-  flex-shrink: 0;
 }
 
 .language-tool-select {
@@ -308,7 +307,7 @@ header {
   width: 15.82606rem;
   height: 2.5rem;
   align-items: center;
-  flex-shrink: 0;
+  white-space: nowrap; /* 줄 바꿈을 방지 */
 }
 
 .toggle {
