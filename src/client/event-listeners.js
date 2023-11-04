@@ -57,6 +57,7 @@ iconCopyList.forEach((iconCopy) => {
     util.copyText(iconCopy);
   });
 });
+
 //input-box event listeners
 const btnTranslate = document.querySelector("#btn-translate");
 btnTranslate.addEventListener("click", () => {

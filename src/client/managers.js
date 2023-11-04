@@ -1,5 +1,3 @@
-const { config } = require("process");
-
 class AjaxManager {
   constructor(stateManager) {
     this.axios = require("axios");
@@ -7,17 +5,22 @@ class AjaxManager {
   }
 
   async translate() {
+    // inputConfig, outputConfigs를 활용하여 dataToSendArr을 만듦
     const { inputConfig, outputConfigs } = this.stateManager.getState();
     const { srcLang, srcText } = inputConfig;
 
-    //보낼 데이터 객체들을 담은 배열을 만듦
-    const dataToSendArr = outputConfigs.map((outputConfig) => {
-      const data = {};
-      data.srcLang = srcLang;
-      data.srcText = srcText;
-      data.targetLang = outputConfig.targetLang;
-      data.targetTool = outputConfig.targetTool;
-      return data;
+    // outputConfig의 요소 중 state가 on인 것만 필터링
+    const filteredOutputConfigs = outputConfigs.filter(
+      (outputConfig) => outputConfig.state === "on"
+    );
+    const dataToSendArr = filteredOutputConfigs.map((outputConfig) => {
+      const { targetLang, targetTool } = outputConfig;
+      return {
+        srcLang: srcLang,
+        srcText: srcText,
+        targetLang: targetLang,
+        targetTool: targetTool,
+      };
     });
 
     //데이터를 json형식으로 변환
