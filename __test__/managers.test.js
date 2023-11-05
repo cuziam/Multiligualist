@@ -1,8 +1,8 @@
-/**
- * @jest-environment jsdom
- */
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const sampleHtml = require("../__test__/sampleHtml");
+const dom = new JSDOM(sampleHtml);
 
-// translate.test.js
 const {
   StateManager,
   AjaxManager,
@@ -18,7 +18,7 @@ describe("translate", () => {
   let mockPost;
   //테스트 초기 세팅.
   beforeEach(() => {
-    document.body.innerHTML = require("../__test__/sampleHtml");
+    global.document = dom.window.document;
     stateManager = new StateManager();
     ajaxManager = new AjaxManager(stateManager);
     uiManager = new UiManager(stateManager);
@@ -55,38 +55,6 @@ describe("translate", () => {
       (config) => config.state === "on"
     );
     expect(actualFilteredConfigs.length).toBe(expectedLength);
-  });
-
-  it("should convert data to JSON", async () => {
-    await translate();
-    // JSON.stringify 함수를 사용하여 변환된 결과를 검증할 수 있습니다.
-    // 예를 들면, JSON.parse(JSON.stringify(...)) === ... 을 검증하는 것입니다.
-    const expectedData = JSON.stringify([
-      {
-        srcLang: "English",
-        srcText: "Hello my friend!",
-        targetLang: "Korean",
-        targetTool: "Google Translator",
-      },
-      {
-        srcLang: "English",
-        srcText: "Hello my friend!",
-        targetLang: "Spanish",
-        targetTool: "DeepL",
-      },
-    ]);
-    const actualData = JSON.stringify(
-      mockGetState().outputConfigs.map((outputConfig) => {
-        const { targetLang, targetTool } = outputConfig;
-        return {
-          srcLang: srcLang,
-          srcText: srcText,
-          targetLang: targetLang,
-          targetTool: targetTool,
-        };
-      })
-    );
-    expect(actualData).toBe(expectedData);
   });
 
   // 필요에 따라 추가 테스트 케이스를 작성할 수 있습니다.

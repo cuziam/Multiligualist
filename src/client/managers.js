@@ -6,8 +6,10 @@ class AjaxManager {
 
   async translate() {
     // inputConfig, outputConfigs를 활용하여 dataToSendArr을 만듦
+    document.querySelector("#input-box-textarea").value;
     const { inputConfig, outputConfigs } = this.stateManager.getState();
-    const { srcLang, srcText } = inputConfig;
+    const { srcLang } = inputConfig;
+    const srcText = document.querySelector("#input-box-textarea").value;
 
     // outputConfig의 요소 중 state가 on인 것만 필터링
     const filteredOutputConfigs = outputConfigs.filter(

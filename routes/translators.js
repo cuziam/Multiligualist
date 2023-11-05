@@ -17,14 +17,7 @@ router.get("/", (req, res) => {
 router.post("/translate", async (req, res) => {
   const data = req.body;
   console.log(data);
-  // await Promise.all([
-  //   translatePapago(...params),
-  //   translateGoogle(...params),
-  //   translateDeepl(...params),
-  // ]);
-  // if (errors.length > 0) {
-  //   return res.status(500).json({ results, errors });
-  // }
+
   res.status(200).end("success");
   results.length = 0;
 });

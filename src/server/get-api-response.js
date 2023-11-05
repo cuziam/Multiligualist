@@ -1,3 +1,5 @@
+require("dotenv").config(); //.env파일을 읽어서 process.env에 넣어줌
+
 const axios = require("axios");
 const { EventEmitter } = require("events");
 const translationEvents = new EventEmitter();
@@ -14,12 +16,9 @@ translationEvents.on("error", (error) => {
 });
 
 //post요청이 /으로 들어오면 papago api로 데이터들을 보내고 응답을 받은 후에 응답내용을 클라이언트에게 보내준다.
-const clientId = "Q2NhuAe89oAPCapP4mxm";
-const clientSecret = "np8i4EfFB4";
-
 const translatePapago = async function (srcText, srcLang, targetLang) {
-  const clientId = "Q2NhuAe89oAPCapP4mxm";
-  const clientSecret = "np8i4EfFB4";
+  const clientId = process.env.NAVER_CLIENT_ID;
+  const clientSecret = process.env.NAVER_CLIENT_SECRET;
   const apiUrl = "https://openapi.naver.com/v1/papago/n2mt";
 
   const options = {
@@ -45,10 +44,10 @@ const translatePapago = async function (srcText, srcLang, targetLang) {
 
 const { TranslationServiceClient } = require("@google-cloud/translate");
 const translationClient = new TranslationServiceClient();
-const projectId = "translators-403306";
-const location = "global";
 
 const translateGoogle = async function (srcText, srcLang, targetLang) {
+  const projectId = process.env.GOOGLE_PROJECT_ID;
+  const location = process.env.GOOGLE_LOCATION;
   const request = {
     parent: `projects/${projectId}/locations/${location}`,
     contents: [srcText],
@@ -71,7 +70,7 @@ const translateGoogle = async function (srcText, srcLang, targetLang) {
 };
 
 const deepl = require("deepl-node");
-const authKey = "8637ebc3-08db-db43-0a27-9499681254b0:fx";
+const authKey = process.env.DEEPL_AUTH_KEY;
 const translator = new deepl.Translator(authKey);
 
 const translateDeepl = async function (srcText, srcLang, targetLang) {

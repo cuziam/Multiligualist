@@ -61,5 +61,8 @@ iconCopyList.forEach((iconCopy) => {
 //input-box event listeners
 const btnTranslate = document.querySelector("#btn-translate");
 btnTranslate.addEventListener("click", () => {
+  stateManager.inputConfig.srcText = document.querySelector(
+    "#input-box-textarea"
+  ).value;
   ajaxManager.translate();
 });
