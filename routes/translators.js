@@ -4,6 +4,7 @@ const {
   translatePapago,
   translateGoogle,
   translateDeepl,
+  translateClientReq,
   errors,
   results,
 } = require("../src/server/get-api-response");
@@ -17,9 +18,7 @@ router.get("/", (req, res) => {
 router.post("/translate", async (req, res) => {
   const data = req.body;
   console.log(data);
-
-  res.status(200).end("success");
-  results.length = 0;
+  translateClientReq(data);
 });
 
 module.exports = router;
