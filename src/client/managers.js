@@ -5,6 +5,14 @@ class AjaxManager {
   }
 
   async translate() {
+    //sse엔드포인트 설정.
+    const eventSource = new EventSource("/events");
+    //일단 데이터를 받아서 콘솔에 출력하는 것으로 테스트
+    eventSource.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      console.log(data);
+    };
+
     // inputConfig, outputConfigs를 활용하여 dataToSendArr을 만듦
     document.querySelector("#input-box-textarea").value;
     const { inputConfig, outputConfigs } = this.stateManager.getState();
