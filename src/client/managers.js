@@ -1,17 +1,38 @@
 class AjaxManager {
-  constructor(stateManager) {
+  constructor(stateManager, uiManager) {
     this.axios = require("axios");
     this.stateManager = stateManager;
+    this.uiManager = uiManager;
+    this.eventSource = null;
   }
 
-  async translate() {
-    //sse엔드포인트 설정.
-    const eventSource = new EventSource("/events");
+  //이벤트 리스너 콜백 함수
+  applyTranslationResult(e) {
+    const data = JSON.parse(e.data);
     //일단 데이터를 받아서 콘솔에 출력하는 것으로 테스트
-    eventSource.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      console.log(data);
-    };
+    console.log(data);
+    //데이터를 받아서 outputConfigs를 업데이트
+    const { targetLang, targetText, targetTool } = data[0];
+    this.stateManager.updateOutputConfigsText(
+      targetLang,
+      targetTool,
+      targetText
+    );
+    //uiManager의 updateChosenLangTool을 호출
+    this.uiManager.updateChosenLangTool(targetLang, targetTool, targetText);
+  }
+
+  // SSE를 이용해 번역 결과를 받아옴
+  async translate() {
+    // eventSource가 존재하면 닫음
+    if (this.eventSource) {
+      this.eventSource.close();
+    }
+
+    //새로운 eventSource를 생성.(SSE를 받을 엔드포인트는 /events)
+    this.eventSource = new EventSource("/events");
+
+    this.eventSource.onmessage = this.applyTranslationResult.bind(this);
 
     // inputConfig, outputConfigs를 활용하여 dataToSendArr을 만듦
     document.querySelector("#input-box-textarea").value;
@@ -43,7 +64,6 @@ class AjaxManager {
         "Content-Type": "application/json",
       },
     });
-    console.log(response);
   }
 }
 
@@ -168,6 +188,22 @@ class UiManager {
     // change previous closest output box to new output box
     outputBoxes.replaceChild(newOutputBox, closestOutputBox);
   }
+
+  //outputConfigs를 이용해 언어와 툴이 같은 outputBox의 내용을 업데이트
+  updateChosenLangTool(targetLang, targetTool, targetText) {
+    const outputBoxes = document.querySelectorAll(".output-box-toggle-on");
+    outputBoxes.forEach((outputBox) => {
+      const outputLang = outputBox.querySelector(".chosen-lang");
+      const outputTool = outputBox.querySelector(".chosen-tool");
+      if (
+        outputLang.textContent === targetLang &&
+        outputTool.textContent === targetTool
+      ) {
+        const outputText = outputBox.querySelector(".box-text");
+        outputText.textContent = targetText;
+      }
+    });
+  }
 }
 
 class StateManager {
@@ -225,6 +261,17 @@ class StateManager {
       // Create a new object for immutability
       this.inputConfig = { ...this.inputConfig, [key]: newValue };
     }
+  }
+
+  updateOutputConfigsText(targetLang, targetTool, targetText) {
+    this.outputConfigs.forEach((outputConfig) => {
+      if (
+        outputConfig.targetLang === targetLang &&
+        outputConfig.targetTool === targetTool
+      ) {
+        outputConfig.targetText = targetText;
+      }
+    });
   }
 }
 

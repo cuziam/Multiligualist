@@ -4,7 +4,7 @@ const util = require("./util");
 // 매니저 생성
 const stateManager = new StateManager();
 const uiManager = new UiManager(stateManager);
-const ajaxManager = new AjaxManager(stateManager);
+const ajaxManager = new AjaxManager(stateManager, uiManager);
 
 // 이벤트 리스너 연결
 //window event listeners
