@@ -1,3 +1,4 @@
+// 서버와의 통신을 담당하는 controller
 class AjaxManager {
   constructor(stateManager, uiManager) {
     this.axios = require("axios");
@@ -7,19 +8,18 @@ class AjaxManager {
   }
 
   //이벤트 리스너 콜백 함수
-  applyTranslationResult(e) {
+  applyTargetTextToConfig(e) {
     const data = JSON.parse(e.data);
     //일단 데이터를 받아서 콘솔에 출력하는 것으로 테스트
     console.log(data);
     //데이터를 받아서 outputConfigs를 업데이트
     const { targetLang, targetText, targetTool } = data[0];
-    this.stateManager.updateOutputConfigsText(
+    this.stateManager.setOutputConfigTargetText(
       targetLang,
       targetTool,
       targetText
     );
-    //uiManager의 updateChosenLangTool을 호출
-    this.uiManager.updateChosenLangTool(targetLang, targetTool, targetText);
+    this.uiManager.updateTargetText();
   }
 
   // SSE를 이용해 번역 결과를 받아옴
@@ -32,11 +32,11 @@ class AjaxManager {
     //새로운 eventSource를 생성.(SSE를 받을 엔드포인트는 /events)
     this.eventSource = new EventSource("/events");
 
-    this.eventSource.onmessage = this.applyTranslationResult.bind(this);
+    this.eventSource.onmessage = this.applyTargetTextToConfig.bind(this);
 
     // inputConfig, outputConfigs를 활용하여 dataToSendArr을 만듦
     document.querySelector("#input-box-textarea").value;
-    const { inputConfig, outputConfigs } = this.stateManager.getState();
+    const { inputConfig, outputConfigs } = this.stateManager.getconfigs();
     const { srcLang } = inputConfig;
     const srcText = document.querySelector("#input-box-textarea").value;
 
@@ -64,9 +64,12 @@ class AjaxManager {
         "Content-Type": "application/json",
       },
     });
+
+    //response의 유형에 따라 처리
   }
 }
 
+//클라이언트의 UI를 담당하는 View
 class UiManager {
   constructor(stateManager) {
     this.stateManager = stateManager;
@@ -141,12 +144,12 @@ class UiManager {
           updateKey = "targetTool";
         }
 
-        this.stateManager.updateState(
+        this.stateManager.setConfig(
           configIndex,
           updateKey,
           optionElement.textContent
         );
-        console.log(this.stateManager.getState());
+        console.log(this.stateManager.getconfigs());
         dropdown.remove();
       });
     });
@@ -162,7 +165,7 @@ class UiManager {
 
     // 상태 업데이트
     const newState = isToggleOn ? "off" : "on";
-    this.stateManager.updateState(configIndex, "state", newState);
+    this.stateManager.setConfig(configIndex, "state", newState);
 
     // Search closest lang-tool-select of closest output box(기존 선택 정보를 담음)
     const prevLangToolSelect = closestOutputBox.querySelector(
@@ -189,31 +192,34 @@ class UiManager {
     outputBoxes.replaceChild(newOutputBox, closestOutputBox);
   }
 
-  //outputConfigs를 이용해 언어와 툴이 같은 outputBox의 내용을 업데이트
-  updateChosenLangTool(targetLang, targetTool, targetText) {
-    const outputBoxes = document.querySelectorAll(".output-box-toggle-on");
-    outputBoxes.forEach((outputBox) => {
-      const outputLang = outputBox.querySelector(".chosen-lang");
-      const outputTool = outputBox.querySelector(".chosen-tool");
-      if (
-        outputLang.textContent === targetLang &&
-        outputTool.textContent === targetTool
-      ) {
-        const outputText = outputBox.querySelector(".box-text");
-        outputText.textContent = targetText;
-      }
+  //outputConfigs를 이용해 outputBox의 내용을 업데이트
+  updateTargetText() {
+    const { outputConfigs } = this.stateManager.getconfigs();
+    const boxesToUpdate = document.querySelectorAll(".output-box-toggle-on");
+    boxesToUpdate.forEach((boxToUpdate) => {
+      const targetLang = boxToUpdate.querySelector(".chosen-lang").textContent;
+      const targetTool = boxToUpdate.querySelector(".chosen-tool").textContent;
+
+      console.log(targetLang, targetTool, outputConfigs);
+      const targetText = outputConfigs.find(
+        (outputConfig) =>
+          outputConfig.targetLang === targetLang &&
+          outputConfig.targetTool === targetTool
+      ).targetText;
+      boxToUpdate.querySelector(".box-text").textContent = targetText;
     });
   }
 }
-
+//클라이언트가 담당하는 정보를 담은 Model.
 class StateManager {
   constructor() {
     this.inputConfig = {};
     this.outputConfigs = [];
-    this.initializeState();
+    this.initializeConfigs();
+    this.region = {};
   }
 
-  initializeState() {
+  initializeConfigs() {
     this.inputConfig = {
       srcLang: document.querySelector("#input-box .chosen-lang").textContent,
       srcText:
@@ -243,14 +249,14 @@ class StateManager {
     console.log(this.outputConfigs);
   }
 
-  getState() {
+  getconfigs() {
     return {
       inputConfig: this.inputConfig,
       outputConfigs: this.outputConfigs,
     };
   }
 
-  updateState(configIndex, key, newValue) {
+  setConfig(configIndex, key, newValue) {
     if (configIndex !== null && configIndex !== undefined) {
       // Create a new object for immutability
       this.outputConfigs[configIndex] = {
@@ -263,7 +269,7 @@ class StateManager {
     }
   }
 
-  updateOutputConfigsText(targetLang, targetTool, targetText) {
+  setOutputConfigTargetText(targetLang, targetTool, targetText) {
     this.outputConfigs.forEach((outputConfig) => {
       if (
         outputConfig.targetLang === targetLang &&
