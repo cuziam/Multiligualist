@@ -35,16 +35,17 @@ class outputConfigs {
 }
 
 //클라이언트가 담당하는 정보를 담은 Model.
-class StateManager {
+class ClientModel {
   constructor() {
     this.userInfo = {}; //저장된 유저정보에 따라 변경될 예정.
     this.region = {}; //저장된 지역정보에 따라 변경될 예정.
-    this.inputConfig = new InputConfig();
-    this.outputConfigs = new outputConfigs();
+    this.inputConfig = {};
+    this.outputConfigs = [];
     this.initializeConfigs();
   }
 
   initializeConfigs() {
+    //임시로 작성!!!!
     this.inputConfig = {
       srcLang: document.querySelector("#input-box .chosen-lang").textContent,
       srcText:
@@ -74,7 +75,7 @@ class StateManager {
     console.log(this.outputConfigs);
   }
 
-  getconfigs() {
+  getConfigs() {
     return {
       inputConfig: this.inputConfig,
       outputConfigs: this.outputConfigs,
@@ -105,4 +106,4 @@ class StateManager {
     });
   }
 }
-module.exports = StateManager;
+module.exports = ClientModel;

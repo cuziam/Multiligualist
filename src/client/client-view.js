@@ -1,7 +1,6 @@
 //클라이언트의 UI를 담당하는 View
-class UiManager {
-  constructor(stateManager) {
-    this.stateManager = stateManager;
+class ClientView {
+  constructor() {
     this.currentDropdown = null;
     this.BoxElements = {
       inputBox: document.querySelector("#input-box"),
@@ -27,7 +26,7 @@ class UiManager {
     }
   }
 
-  displayDropdown(iconSelect, configIndex, isLanguage) {
+  displayDropdown(iconSelect, configIndex, isLanguage, callback) {
     const dropdownClass = isLanguage ? "lang-dropdown" : "tool-dropdown";
     const chosenClass = isLanguage ? "chosen-lang" : "chosen-tool";
     const optionClass = isLanguage ? "language-option" : "translator-option";
@@ -72,20 +71,15 @@ class UiManager {
         } else {
           updateKey = "targetTool";
         }
-
-        this.stateManager.setConfig(
-          configIndex,
-          updateKey,
-          optionElement.textContent
-        );
-        console.log(this.stateManager.getconfigs());
+        //컨트롤러로
+        callback(configIndex, updateKey, optionElement.textContent);
         dropdown.remove();
       });
     });
   }
 
   // Toggle on/off
-  toggleSwitch(iconToggle, configIndex) {
+  toggleSwitch(iconToggle, configIndex, callback) {
     const outputBoxes = iconToggle.closest("#output-boxes");
     const isToggleOn = iconToggle.closest(".output-box-toggle-on");
     const closestOutputBox = isToggleOn
@@ -94,8 +88,7 @@ class UiManager {
 
     // 상태 업데이트
     const newState = isToggleOn ? "off" : "on";
-    this.stateManager.setConfig(configIndex, "state", newState);
-    // console.log(this.stateManager.getconfigs());
+    callback(configIndex, "state", newState);
     // Search closest lang-tool-select of closest output box(기존 선택 정보를 담음)
     const prevLangToolSelect = closestOutputBox.querySelector(
       ".language-tool-select"
@@ -122,8 +115,8 @@ class UiManager {
   }
 
   //outputConfigs를 이용해 outputBox의 내용을 업데이트
-  updateTargetText() {
-    const { outputConfigs } = this.stateManager.getconfigs();
+  updateTargetText(configs) {
+    const { outputConfigs } = configs;
     const boxesToUpdate = document.querySelectorAll(".output-box-toggle-on");
     boxesToUpdate.forEach((boxToUpdate) => {
       const targetLang = boxToUpdate.querySelector(".chosen-lang").textContent;
@@ -140,4 +133,4 @@ class UiManager {
   }
 }
 
-module.exports = UiManager;
+module.exports = ClientView;
