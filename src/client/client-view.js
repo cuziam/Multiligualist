@@ -26,6 +26,43 @@ class ClientView {
     }
   }
 
+  // makeDropdown(boxType, isLanguage, config) {
+  //   if (isLanguage) {
+  //   } else {
+  //     const dropdown = document.createElement("div");
+
+  //     dropdown.classList.add("tool-dropdown");
+  //     dropdown.style.display = "flex";
+  //   }
+  // }
+
+  // displayDropdown(iconSelect, Configs) {
+  //   //이전에 표시된 드롭다운 삭제
+  //   if (this.currentDropdown) {
+  //     this.currentDropdown.remove();
+  //   }
+  //   //선택된 아이콘이 언어 선택인지, 번역기 선택인지 판단
+  //   const isLanguage = iconSelect.classList.contains("icon-language-select");
+  //   //선택된 아이콘을 담고 있는 박스 탐색
+  //   const closestBox =
+  //     iconSelect.closest(".output-box-toggle-on") ||
+  //     iconSelect.closest(".output-box-toggle-off") ||
+  //     iconSelect.closest("#input-box");
+  //   //각각의 박스에 대응하는 config탐색
+  //   let config;
+  //   let boxType;
+  //   if (closestBox.id === "input-box") {
+  //     config = Configs.inputConfig;
+  //     boxType = "input";
+  //   } else {
+  //     const configIndex = Array.from(closestBox.parentNode.children).indexOf(
+  //       closestBox
+  //     );
+  //     config = Configs.outputConfigs[configIndex];
+  //     boxType = "output";
+  //   }
+  // }
+
   displayDropdown(iconSelect, configIndex, isLanguage, callback) {
     const dropdownClass = isLanguage ? "lang-dropdown" : "tool-dropdown";
     const chosenClass = isLanguage ? "chosen-lang" : "chosen-tool";

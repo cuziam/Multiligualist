@@ -34,6 +34,8 @@ class outputConfigs {
   }
 }
 
+const { supportedLangs, supportedTools } = require("./supported-languages");
+
 //클라이언트가 담당하는 정보를 담은 Model.
 class ClientModel {
   constructor() {
@@ -50,6 +52,10 @@ class ClientModel {
       srcLang: document.querySelector("#input-box .chosen-lang").textContent,
       srcText:
         document.querySelector("#input-box #input-box-textarea").value || "",
+      //srcLang 지원 언어는 papago의 지원 언어로 고정
+      supportedLangs: supportedLangs[papago].supportedPairs.map(
+        (pair) => pair[0]
+      ),
     };
 
     // 박스의 종류와 언어, 번역기를 저장
