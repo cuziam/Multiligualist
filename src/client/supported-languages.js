@@ -1,6 +1,6 @@
 //papago supported languages
 const deepLSupportedLangs = {
-  srcLang: [
+  srcLangs: [
     "Bulgarian",
     "Czech",
     "Danish",
@@ -31,7 +31,7 @@ const deepLSupportedLangs = {
     "Vietnamese",
     "Chinese",
   ],
-  targetLang: [
+  targetLangs: [
     "Buglarian",
     "Czech",
     "Danish",
@@ -67,7 +67,7 @@ const deepLSupportedLangs = {
 };
 
 const googleSupportedLangs = {
-  srcLang: [
+  srcLangs: [
     "Afrikaans",
     "Albanian",
     "Amharic",
@@ -172,7 +172,7 @@ const googleSupportedLangs = {
     "Yoruba",
     "Zulu",
   ],
-  targetLang: [
+  targetLangs: [
     "Afrikaans",
     "Albanian",
     "Amharic",
@@ -320,11 +320,7 @@ const papagoSupportedLangs = {
   ],
 };
 
-const supportedTools = {
-  deepL: "DeepL",
-  google: "Google",
-  papago: "Papago",
-};
+const supportedTools = ["DeepL", "Google", "Papago"];
 
 const supportedLangs = {
   deepL: deepLSupportedLangs,

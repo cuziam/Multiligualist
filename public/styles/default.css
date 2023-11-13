@@ -395,6 +395,7 @@ svg:hover title {
   position: absolute;
   top: 0;
   left: 0;
+  overflow: auto;
 
   width: 37.5rem;
   height: 14rem;

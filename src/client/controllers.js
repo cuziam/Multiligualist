@@ -14,44 +14,16 @@ class UiController {
       clientView.adjustZoomLevel(window);
     });
 
-    const inputIconLanguageSelect = document.querySelector(
-      "#input-box .icon-language-select"
-    );
-    const iconLanguageSelectList = document.querySelectorAll(
-      ".output-box-toggle-on .icon-language-select, .output-box-toggle-off .icon-language-select"
-    );
-    const iconTranslatorSelectList = document.querySelectorAll(
-      ".icon-translator-select"
-    );
-
     //dropdown event listeners
-    //input-box에 있는 icon은 index가 null이 되고, 나머지는 차례대로 index가 0, 1, 2, 3, 4, 5, 6, 7, 8, 9가 된다.
-    //코드가 마음에 안 듬.
-    inputIconLanguageSelect.addEventListener("click", () => {
-      clientView.displayDropdown(
-        inputIconLanguageSelect,
-        null,
-        true,
-        this.clientModel.setConfig.bind(this.clientModel)
-      );
-    });
-    iconLanguageSelectList.forEach((icon, index) => {
-      icon.addEventListener("click", () => {
-        clientView.displayDropdown(
-          icon,
-          index,
-          true,
-          this.clientModel.setConfig.bind(this.clientModel)
-        );
-      });
-    });
-
-    iconTranslatorSelectList.forEach((icon, index) => {
-      icon.addEventListener("click", () => {
-        clientView.displayDropdown(
-          icon,
-          index,
-          false,
+    const iconLangToolList = document.querySelectorAll(
+      ".icon-language-select, .icon-translator-select"
+    );
+    iconLangToolList.forEach((iconLangTool) => {
+      iconLangTool.addEventListener("click", () => {
+        console.log("clicked");
+        this.clientView.displayDropdown(
+          iconLangTool,
+          this.clientModel.getConfigs(),
           this.clientModel.setConfig.bind(this.clientModel)
         );
       });
@@ -64,7 +36,11 @@ class UiController {
 
     iconToggles.forEach((iconToggle, idx) => {
       iconToggle.addEventListener("click", () => {
-        clientView.toggleSwitch(iconToggle, idx, this.clientModel.setConfig);
+        clientView.toggleSwitch(
+          iconToggle,
+          idx,
+          this.clientModel.updateOutputConfig.bind(this.clientModel)
+        );
       });
     });
 

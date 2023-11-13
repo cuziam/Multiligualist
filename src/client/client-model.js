@@ -1,39 +1,3 @@
-class InputConfig {
-  constructor(srcLang, srcText) {
-    this.srcLang = srcLang;
-    this.srcText = srcText;
-  }
-  setLangText(srcLang, srcText) {
-    this.srcLang = srcLang;
-    this.srcText = srcText;
-  }
-  getLangText() {
-    return {
-      srcLang: this.srcLang,
-      srcText: this.srcText,
-    };
-  }
-}
-
-class outputConfigs {
-  constructor() {
-    this.outputConfigs = [];
-  }
-
-  addOutputConfig(state, targetLang, targetTool, targetText) {
-    this.outputConfigs.push({
-      state: state,
-      targetLang: targetLang,
-      targetTool: targetTool,
-      targetText: targetText,
-    });
-  }
-
-  getOutputConfigs() {
-    return this.outputConfigs;
-  }
-}
-
 const { supportedLangs, supportedTools } = require("./supported-languages");
 
 //클라이언트가 담당하는 정보를 담은 Model.
@@ -47,15 +11,12 @@ class ClientModel {
   }
 
   initializeConfigs() {
-    //임시로 작성!!!!
     this.inputConfig = {
       srcLang: document.querySelector("#input-box .chosen-lang").textContent,
       srcText:
         document.querySelector("#input-box #input-box-textarea").value || "",
-      //srcLang 지원 언어는 papago의 지원 언어로 고정
-      supportedLangs: supportedLangs[papago].supportedPairs.map(
-        (pair) => pair[0]
-      ),
+      //srcLang 지원 언어는 deepL의 지원 언어로 임시로 고정
+      supportedSrcLangs: supportedLangs.deepL.srcLangs.sort(),
     };
 
     // 박스의 종류와 언어, 번역기를 저장
@@ -76,9 +37,11 @@ class ClientModel {
         targetLang: lang.textContent,
         targetTool: targetTools[index].textContent,
         targetText: "",
+        supportedTargetLangs: supportedLangs.deepL.targetLangs.sort(),
+        supportedTargetTools: supportedTools.sort(),
       };
     });
-    console.log(this.outputConfigs);
+    console.log(this.inputConfig, this.outputConfigs);
   }
 
   getConfigs() {
@@ -88,16 +51,36 @@ class ClientModel {
     };
   }
 
-  setConfig(configIndex, key, newValue) {
-    if (configIndex !== null && configIndex !== undefined) {
-      // Create a new object for immutability
-      this.outputConfigs[configIndex] = {
-        ...this.outputConfigs[configIndex],
-        [key]: newValue,
-      };
+  getInputConfig() {
+    return this.inputConfig;
+  }
+
+  getOutputConfigs() {
+    return this.outputConfigs;
+  }
+
+  updateInputConfig(key, newValue) {
+    if (!this.inputConfig[key]) {
+      console.log("key not found");
+      return;
+    }
+    this.inputConfig[key] = newValue;
+  }
+  updateOutputConfig(configIndex, key, newValue) {
+    console.log(this.outputConfigs);
+    if (!this.outputConfigs[configIndex][key]) {
+      console.log("key not found");
+      return;
+    }
+    this.outputConfigs[configIndex][key] = newValue;
+  }
+  setConfig(index, config) {
+    if (!config) return;
+
+    if (index === undefined || index === null) {
+      this.inputConfig = config;
     } else {
-      // Create a new object for immutability
-      this.inputConfig = { ...this.inputConfig, [key]: newValue };
+      this.outputConfigs[index] = config;
     }
   }
 
