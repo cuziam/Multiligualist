@@ -27,6 +27,11 @@ class ClientView {
   }
 
   makeDropdown(isLanguage, config) {
+    //문자열을 id로 사용하기 위한 헬퍼 함수
+    const makeIdString = (str) => {
+      return str.replace(" ", "-").replace(/[()]/g, "");
+    };
+
     //깊은 복사한 config
     const copiedConfig = JSON.parse(JSON.stringify(config));
 
@@ -42,7 +47,7 @@ class ClientView {
       copiedConfig.supportedSrcLangs.forEach((lang) => {
         const langElement = document.createElement("div");
         langElement.classList.add("language-option");
-        langElement.setAttribute("id", lang);
+        langElement.setAttribute("id", makeIdString(lang));
         langElement.textContent = lang;
         dropdown.appendChild(langElement);
       });
@@ -56,7 +61,7 @@ class ClientView {
         copiedConfig.supportedTargetLangs.forEach((lang) => {
           const langElement = document.createElement("div");
           langElement.classList.add("language-option");
-          langElement.setAttribute("id", lang);
+          langElement.setAttribute("id", makeIdString(lang));
           langElement.textContent = lang;
           dropdown.appendChild(langElement);
         });
@@ -66,14 +71,16 @@ class ClientView {
         copiedConfig.supportedTargetTools.forEach((tool) => {
           const toolElement = document.createElement("div");
           toolElement.classList.add("translator-option");
-          toolElement.setAttribute("id", tool);
+          toolElement.setAttribute("id", makeIdString(tool));
           toolElement.textContent = tool;
           dropdown.appendChild(toolElement);
         });
       }
     }
     //선택된 아이템 하이라이트
-    const chosenItemElement = dropdown.querySelector(`#${chosenItem}`);
+    const chosenItemElement = dropdown.querySelector(
+      `#${makeIdString(chosenItem)}`
+    );
     chosenItemElement.classList.add("highlighted");
     return dropdown;
   }

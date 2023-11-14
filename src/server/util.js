@@ -13,6 +13,7 @@ const languageMap = {
   Catalan: "ca",
   Cebuano: "ceb",
   Chichewa: "ny",
+  Chinese: "zh",
   "Chinese (Simplified)": "zh-cn",
   "Chinese (Traditional)": "zh-tw",
   Corsican: "co",
@@ -21,6 +22,8 @@ const languageMap = {
   Danish: "da",
   Dutch: "nl",
   English: "en",
+  "English (British)": "en-gb",
+  "English (American)": "en-us",
   Esperanto: "eo",
   Estonian: "et",
   Filipino: "tl",
@@ -72,6 +75,8 @@ const languageMap = {
   Persian: "fa",
   Polish: "pl",
   Portuguese: "pt",
+  "Portuguese (Brazil)": "pt-br",
+  "Portuguese (Portugal)": "pt-pt",
   Punjabi: "pa",
   Romanian: "ro",
   Russian: "ru",
@@ -114,7 +119,7 @@ reversedLanguageMap = Object.entries(languageMap).reduce(
   {}
 );
 
-const languageToISOCode = (language) => {
+const languageToISOCode = (language, tool) => {
   return languageMap[language];
 };
 const ISOCodeToLanguage = (ISOCode) => {

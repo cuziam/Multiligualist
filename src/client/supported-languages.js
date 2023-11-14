@@ -1,4 +1,3 @@
-//papago supported languages
 const deepLSupportedLangs = {
   srcLangs: [
     "Bulgarian",
@@ -32,7 +31,7 @@ const deepLSupportedLangs = {
     "Chinese",
   ],
   targetLangs: [
-    "Buglarian",
+    "Bulgarian",
     "Czech",
     "Danish",
     "German",
@@ -320,7 +319,7 @@ const papagoSupportedLangs = {
   ],
 };
 
-const supportedTools = ["DeepL", "Google", "Papago"];
+const supportedTools = ["DeepL", "Google Translator", "Papago"];
 
 const supportedLangs = {
   deepL: deepLSupportedLangs,
