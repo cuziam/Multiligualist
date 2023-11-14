@@ -26,6 +26,7 @@ class UiController {
           this.clientModel.getConfigs(),
           this.clientModel.setConfig.bind(this.clientModel)
         );
+        console.log("현재 정보", this.clientModel.getConfigs());
       });
     });
 

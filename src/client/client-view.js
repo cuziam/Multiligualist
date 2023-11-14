@@ -26,13 +26,14 @@ class ClientView {
     }
   }
 
-  async makeDropdown(isLanguage, config) {
+  makeDropdown(isLanguage, config) {
     //깊은 복사한 config
     const copiedConfig = JSON.parse(JSON.stringify(config));
 
-    console.log("chosen config", copiedConfig);
+    //드롭다운 생성
     const dropdown = document.createElement("div");
     dropdown.style.display = "flex";
+
     //input-box의 경우 언어 선택, output-box의 경우 언어 선택과 번역기 선택이 가능하다.
     let chosenItem;
     if (copiedConfig.supportedSrcLangs) {
@@ -43,11 +44,6 @@ class ClientView {
         langElement.classList.add("language-option");
         langElement.setAttribute("id", lang);
         langElement.textContent = lang;
-        langElement.addEventListener("click", () => {
-          //선택되면 config의 srcLang을 업데이트
-          copiedConfig.srcLang = lang;
-          dropdown.remove();
-        });
         dropdown.appendChild(langElement);
       });
     } else if (
@@ -62,11 +58,6 @@ class ClientView {
           langElement.classList.add("language-option");
           langElement.setAttribute("id", lang);
           langElement.textContent = lang;
-          langElement.addEventListener("click", () => {
-            //선택되면 config의 targetLang를 업데이트
-            copiedConfig.targetLang = lang;
-            dropdown.remove();
-          });
           dropdown.appendChild(langElement);
         });
       } else {
@@ -77,11 +68,6 @@ class ClientView {
           toolElement.classList.add("translator-option");
           toolElement.setAttribute("id", tool);
           toolElement.textContent = tool;
-          toolElement.addEventListener("click", () => {
-            //선택되면 config의 targetTool을 업데이트
-            copiedConfig.targetTool = tool;
-            dropdown.remove();
-          });
           dropdown.appendChild(toolElement);
         });
       }
@@ -89,48 +75,72 @@ class ClientView {
     //선택된 아이템 하이라이트
     const chosenItemElement = dropdown.querySelector(`#${chosenItem}`);
     chosenItemElement.classList.add("highlighted");
-    return [dropdown, copiedConfig];
+    return dropdown;
   }
 
-  displayDropdown(iconSelect, configs, setConfig) {
+  async displayDropdown(iconSelect, configs, setConfig) {
     //이전에 표시된 드롭다운 삭제
     if (this.currentDropdown) {
       this.currentDropdown.remove();
     }
+
     //선택된 아이콘이 언어 선택인지, 번역기 선택인지 판단
     const isLanguage = iconSelect.classList.contains("icon-language-select");
+
     //선택된 아이콘을 담고 있는 박스 탐색
     const closestBox =
       iconSelect.closest(".output-box-toggle-on") ||
       iconSelect.closest(".output-box-toggle-off") ||
       iconSelect.closest("#input-box");
+    console.log("현재 선택된 박스:", closestBox);
+
     //각각의 박스에 대응하는 config탐색
     let config;
     let configIndex;
     if (closestBox.id === "input-box") {
       config = configs.inputConfig;
     } else {
-      const configIndex = Array.from(closestBox.parentNode.children).indexOf(
+      configIndex = Array.from(closestBox.parentNode.children).indexOf(
         closestBox
       );
-      console.log(configIndex);
       config = configs.outputConfigs[configIndex];
     }
+    console.log("현재 접근한 config:", config, "configIndex:", configIndex);
+
     //드롭다운 생성
-    const [dropdown, returnedConfig] = this.makeDropdown(isLanguage, config);
-    //삽입 위치 결정//문제점 this.makeDropdown이 다 안 끝났는데 returnedConfig를 쓰는 문제
-    console.log(returnedConfig);
+    const dropdown = this.makeDropdown(isLanguage, config);
+    console.log("반환된 드롭다운:", dropdown);
+    //삽입 위치 결정
     closestBox.style.position = "relative";
     closestBox.appendChild(dropdown);
+
     //현재 드롭다운으로 설정
     this.currentDropdown = dropdown;
-    //박스 유형에 따라 Config 업데이트
-    if (closestBox.id === "input-box") {
-      console.log("input box");
-      setConfig(null, returnedConfig);
-    } else {
-      setConfig(configIndex, returnedConfig);
-    }
+
+    //드롭다운의 각 항목이 클릭되면 config의 srcLang, targetLang, targetTool을 업데이트
+    dropdown
+      .querySelectorAll(".language-option, .translator-option")
+      .forEach((optionElement) => {
+        optionElement.addEventListener("click", (e) => {
+          let updateKey;
+          if (closestBox.id === "input-box") {
+            updateKey = "srcLang";
+          } else if (isLanguage) {
+            updateKey = "targetLang";
+          } else {
+            updateKey = "targetTool";
+          }
+          const newValue = e.target.textContent;
+          console.log("setConfig 파라미터", configIndex, updateKey, newValue);
+          setConfig(configIndex, updateKey, newValue);
+          //박스의 내용을 업데이트
+          const chosenItemElement = closestBox.querySelector(
+            isLanguage ? ".chosen-lang" : ".chosen-tool"
+          );
+          chosenItemElement.textContent = newValue;
+          dropdown.remove();
+        });
+      });
   }
 
   // displayDropdown(iconSelect, configIndex, isLanguage, callback) {

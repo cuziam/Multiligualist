@@ -74,16 +74,17 @@ class ClientModel {
     }
     this.outputConfigs[configIndex][key] = newValue;
   }
-  setConfig(index, config) {
-    if (!config) return;
-
-    if (index === undefined || index === null) {
-      this.inputConfig = config;
-    } else {
-      this.outputConfigs[index] = config;
+  setConfig(configIndex, key, newValue) {
+    if (configIndex === null || configIndex === undefined) {
+      this.inputConfig[key] = newValue;
+      return;
     }
+    if (!this.outputConfigs[configIndex][key]) {
+      console.log("key not found");
+      return;
+    }
+    this.outputConfigs[configIndex][key] = newValue;
   }
-
   setOutputConfigTargetText(targetLang, targetTool, targetText) {
     this.outputConfigs.forEach((outputConfig) => {
       if (
