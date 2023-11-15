@@ -75,8 +75,8 @@ const languageMap = {
   Persian: "fa",
   Polish: "pl",
   Portuguese: "pt",
-  "Portuguese (Brazil)": "pt-br",
-  "Portuguese (Portugal)": "pt-pt",
+  "Portuguese (Brazilian)": "pt-br",
+  "Portuguese (European)": "pt-pt",
   Punjabi: "pa",
   Romanian: "ro",
   Russian: "ru",
@@ -119,7 +119,7 @@ reversedLanguageMap = Object.entries(languageMap).reduce(
   {}
 );
 
-const languageToISOCode = (language, tool) => {
+const languageToISOCode = (language) => {
   return languageMap[language];
 };
 const ISOCodeToLanguage = (ISOCode) => {
@@ -127,7 +127,35 @@ const ISOCodeToLanguage = (ISOCode) => {
   return reversedLanguageMap[ISOCode];
 };
 
+const ISOCodeForTargetTool = (ISOCode, targetTool) => {
+  if (targetTool === "Papago") {
+    switch (ISOCode) {
+      case "en-us":
+        return "en";
+      case "en-gb":
+        return "en";
+      case "zh-cn":
+        return "zh-CN";
+      case "zh-tw":
+        return "zh-TW";
+      default:
+        return ISOCode;
+    }
+  }
+
+  if (targetTool === "Google Translator") {
+    switch (ISOCode) {
+      case "pt-br":
+        return "pt";
+      case "pt-pt":
+        return "pt";
+      default:
+        return ISOCode;
+    }
+  }
+};
 module.exports = {
   languageToISOCode,
   ISOCodeToLanguage,
+  ISOCodeForTargetTool,
 };

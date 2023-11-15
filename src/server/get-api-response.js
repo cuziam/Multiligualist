@@ -3,7 +3,11 @@ require("dotenv").config(); //.env파일을 읽어서 process.env에 넣어줌
 const axios = require("axios");
 const { EventEmitter } = require("events");
 const translationEvents = new EventEmitter();
-const { languageToISOCode, ISOCodeToLanguage } = require("./util");
+const {
+  languageToISOCode,
+  ISOCodeToLanguage,
+  ISOCodeForTargetTool,
+} = require("./util");
 
 function sendEvents(req, res) {
   res.writeHead(200, {
@@ -26,8 +30,7 @@ const translatePapago = async function (srcText, srcLang, targetLang) {
   const clientId = process.env.NAVER_CLIENT_ID;
   const clientSecret = process.env.NAVER_CLIENT_SECRET;
   const apiUrl = "https://openapi.naver.com/v1/papago/n2mt";
-  const convertedTargetLang =
-    targetLang === "en-us" || targetLang === "en-gb" ? "en" : targetLang;
+
   const options = {
     method: "POST",
     url: apiUrl,
@@ -35,9 +38,10 @@ const translatePapago = async function (srcText, srcLang, targetLang) {
       "X-Naver-Client-Id": clientId,
       "X-Naver-Client-Secret": clientSecret,
     },
-    data: `source=${srcLang}&target=${convertedTargetLang}&text=${encodeURIComponent(
-      srcText
-    )}`,
+    data: `source=${srcLang}&target=${ISOCodeForTargetTool(
+      targetLang,
+      "Papago"
+    )}&text=${encodeURIComponent(srcText)}`,
   };
   try {
     const response = await axios(options);
@@ -78,7 +82,7 @@ const translateGoogle = async function (srcText, srcLang, targetLang) {
     contents: [srcText],
     mimeType: "text/plain", // mime types: text/plain, text/html
     sourceLanguageCode: srcLang,
-    targetLanguageCode: targetLang,
+    targetLanguageCode: ISOCodeForTargetTool(targetLang, "Google Translator"),
   };
   try {
     const [response] = await translationClient.translateText(request);
