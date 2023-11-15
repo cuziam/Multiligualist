@@ -117,6 +117,7 @@ function translateClientReq(reqBody) {
 
     //call the appropriate translation function
     if (targetTool === "Papago") {
+      if (targetLang === "en-us" || targetLang === "en-gb") targetLang = "en";
       translatePapago(srcText, srcLang, targetLang);
     } else if (targetTool === "Google Translator") {
       translateGoogle(srcText, srcLang, targetLang);

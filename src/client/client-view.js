@@ -220,7 +220,7 @@ class ClientView {
     newOutputBox
       .querySelector("#icon-toggle-" + (isToggleOn ? "off" : "on"))
       .addEventListener("click", () => {
-        this.toggleSwitch(newOutputBox, configIndex);
+        this.toggleSwitch(newOutputBox, configIndex, updateOutputConfig);
       });
 
     const elementToRemove = newOutputBox.querySelector(".language-tool-select");

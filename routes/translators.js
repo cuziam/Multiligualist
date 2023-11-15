@@ -1,15 +1,19 @@
 const express = require("express");
 const router = express.Router();
-
+const { languageToISOCode, ISOCodeToLanguage } = require("../src/server/util");
 const {
-  translatePapago,
-  translateGoogle,
-  translateDeepl,
   translateClientReq,
   sendEvents,
 } = require("../src/server/get-api-response");
 
 router.get("/", (req, res) => {
+  // 클라이언트가 선호하는 언어를 파악
+  const preferredLanguages = req.acceptsLanguages();
+  res.locals.preferredLanguage =
+    ISOCodeToLanguage(preferredLanguages[0]) ||
+    ISOCodeToLanguage(preferredLanguages[1]) ||
+    ISOCodeToLanguage(preferredLanguages[2]) ||
+    "English";
   res.render("landing-page");
 });
 
@@ -19,7 +23,7 @@ router.get("/events", (req, res) => {
 
 router.post("/translate", async (req, res) => {
   const data = req.body;
-  console.log(data);
+  console.log("요청 데이터", data);
   translateClientReq(data);
   res.status(200).send("ok");
 });

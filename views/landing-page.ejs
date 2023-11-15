@@ -23,9 +23,9 @@
     <main id="main-flex">
       <%- include('include/input-box') %>
       <div id="output-boxes">
-        <% for(let i=0; i<2; i++ ){ %> <%-
-        include('include/output-box-toggle-on') %> <% }%> <%-
-        include('include/output-box-toggle-off') %>
+        <%-include('include/output-box-toggle-on',{tool: 'Google Translator'})
+        %> <%-include('include/output-box-toggle-on',{tool: 'DeepL'}) %>
+        <%-include('include/output-box-toggle-off') %>
       </div>
     </main>
     <footer></footer>
