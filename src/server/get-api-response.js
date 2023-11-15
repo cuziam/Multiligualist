@@ -26,6 +26,8 @@ const translatePapago = async function (srcText, srcLang, targetLang) {
   const clientId = process.env.NAVER_CLIENT_ID;
   const clientSecret = process.env.NAVER_CLIENT_SECRET;
   const apiUrl = "https://openapi.naver.com/v1/papago/n2mt";
+  const convertedTargetLang =
+    targetLang === "en-us" || targetLang === "en-gb" ? "en" : targetLang;
   const options = {
     method: "POST",
     url: apiUrl,
@@ -33,13 +35,16 @@ const translatePapago = async function (srcText, srcLang, targetLang) {
       "X-Naver-Client-Id": clientId,
       "X-Naver-Client-Secret": clientSecret,
     },
-    data: `source=${srcLang}&target=${targetLang}&text=${encodeURIComponent(
+    data: `source=${srcLang}&target=${convertedTargetLang}&text=${encodeURIComponent(
       srcText
     )}`,
   };
   try {
     const response = await axios(options);
-    console.log(response.data.message.result.translatedText);
+    console.log(
+      "papago 번역 성공: ",
+      response.data.message.result.translatedText
+    );
     translationEvents.emit("update", [
       {
         srcLang: ISOCodeToLanguage(srcLang),
@@ -49,7 +54,15 @@ const translatePapago = async function (srcText, srcLang, targetLang) {
       },
     ]);
   } catch (error) {
-    console.log(error);
+    console.log("papago 번역 실패: ", error.response.data);
+    translationEvents.emit("update", [
+      {
+        srcLang: ISOCodeToLanguage(srcLang),
+        targetLang: ISOCodeToLanguage(targetLang),
+        targetText: error.response.data.errorMessage,
+        targetTool: "Papago",
+      },
+    ]);
   }
 };
 
@@ -69,7 +82,7 @@ const translateGoogle = async function (srcText, srcLang, targetLang) {
   };
   try {
     const [response] = await translationClient.translateText(request);
-    console.log(response.translations[0].translatedText);
+    console.log("Google 번역 성공: ", response.translations[0].translatedText);
     translationEvents.emit("update", [
       {
         srcLang: ISOCodeToLanguage(srcLang),
@@ -79,7 +92,15 @@ const translateGoogle = async function (srcText, srcLang, targetLang) {
       },
     ]);
   } catch (error) {
-    console.log(error);
+    console.log("Google 번역 실패: ", error);
+    translationEvents.emit("update", [
+      {
+        srcLang: ISOCodeToLanguage(srcLang),
+        targetLang: ISOCodeToLanguage(targetLang),
+        targetText: error.details,
+        targetTool: "Google Translator",
+      },
+    ]);
   }
 };
 
@@ -94,7 +115,7 @@ const translateDeepl = async function (srcText, srcLang, targetLang) {
       srcLang,
       targetLang
     );
-    console.log(response.text);
+    console.log("DeepL 번역 성공: ", response.text);
     translationEvents.emit("update", [
       {
         srcLang: ISOCodeToLanguage(srcLang),
@@ -104,7 +125,15 @@ const translateDeepl = async function (srcText, srcLang, targetLang) {
       },
     ]);
   } catch (error) {
-    console.log(error);
+    console.log("DeepL 번역 실패:", error);
+    translationEvents.emit("update", [
+      {
+        srcLang: ISOCodeToLanguage(srcLang),
+        targetLang: ISOCodeToLanguage(targetLang),
+        targetText: error.message,
+        targetTool: "DeepL",
+      },
+    ]);
   }
 };
 
@@ -117,7 +146,6 @@ function translateClientReq(reqBody) {
 
     //call the appropriate translation function
     if (targetTool === "Papago") {
-      if (targetLang === "en-us" || targetLang === "en-gb") targetLang = "en";
       translatePapago(srcText, srcLang, targetLang);
     } else if (targetTool === "Google Translator") {
       translateGoogle(srcText, srcLang, targetLang);
