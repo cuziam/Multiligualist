@@ -26,6 +26,12 @@ class ClientView {
     }
   }
 
+  removeDropdown() {
+    if (this.currentDropdown) {
+      this.currentDropdown.remove();
+    }
+  }
+
   makeDropdown(isLanguage, config) {
     //문자열을 id로 사용하기 위한 헬퍼 함수
     const makeIdString = (str) => {
