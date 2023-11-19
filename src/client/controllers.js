@@ -10,8 +10,15 @@ class UiController {
   }
 
   setEventListeners() {
+    //zoom event listener
     window.addEventListener("load", () => {
       clientView.adjustZoomLevel(window);
+    });
+
+    //input box event listeners
+    const inputBoxTextarea = document.querySelector("#input-box .box-text");
+    inputBoxTextarea.addEventListener("input", () => {
+      this.clientView.displayRemainingLength();
     });
 
     //dropdown event listeners
@@ -49,6 +56,17 @@ class UiController {
     iconCopyList.forEach((iconCopy) => {
       iconCopy.addEventListener("click", () => {
         this.util.copyText(iconCopy);
+      });
+    });
+
+    //history event listeners
+    const iconHistoryList = document.querySelectorAll("#icon-history");
+    iconHistoryList.forEach((iconHistory) => {
+      iconHistory.addEventListener("click", () => {
+        this.clientView.displayHistory(
+          iconHistory,
+          this.clientModel.getOutputConfigs.bind(this.clientModel)
+        );
       });
     });
   }

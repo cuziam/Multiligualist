@@ -21,14 +21,16 @@
     </div>
   </form>
   </div>
-  
     <textarea
       id="input-box-textarea"
       class="box-text"
       type="text"
       placeholder="Please enter what you want to translate..."
+      maxlength="2000"
     ></textarea>
+    <p class="text-count">0/2000</p>
   </form>
+
   <div id="input-box-toolbar">
     <div class="tooltips">
       <%- include('icon-copy') %> <%- include('icon-history') %>

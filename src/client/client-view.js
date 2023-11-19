@@ -26,6 +26,18 @@ class ClientView {
     }
   }
 
+  displayRemainingLength() {
+    const inputTextLength = document.querySelector("#input-box .box-text").value
+      .length;
+    const textCountEle = document.querySelector("#input-box .text-count");
+    textCountEle.textContent = `${inputTextLength}/2000`;
+    if (inputTextLength >= 2000) {
+      textCountEle.style.color = "red";
+    } else {
+      textCountEle.style.color = "var(--text-default)";
+    }
+  }
+
   removeDropdown() {
     if (this.currentDropdown) {
       this.currentDropdown.remove();
@@ -156,52 +168,6 @@ class ClientView {
       });
   }
 
-  // displayDropdown(iconSelect, configIndex, isLanguage, callback) {
-  //   const dropdownClass = isLanguage ? "lang-dropdown" : "tool-dropdown";
-  //   const chosenClass = isLanguage ? "chosen-lang" : "chosen-tool";
-  //   const optionClass = isLanguage ? "language-option" : "translator-option";
-  //   // 이전에 표시된 드롭다운 삭제
-  //   if (this.currentDropdown) {
-  //     this.currentDropdown.remove();
-  //   }
-  //   const chosenItemElement = iconSelect.parentNode.querySelector(
-  //     `.${chosenClass}`
-  //   );
-  //   const chosenItem = chosenItemElement.textContent.replace(" ", "-"); //ex) google translate => google-translate
-  //   const originalDropdown = document.querySelector(`.${dropdownClass}`);
-  //   const dropdown = originalDropdown.cloneNode(true);
-  //   const targetItemElement = dropdown.querySelector(`#${chosenItem}`);
-  //   targetItemElement.classList.add("highlighted");
-  //   dropdown.style.display = "flex";
-  //   // 삽입 위치 결정
-  //   const closestBox =
-  //     iconSelect.closest(".output-box-toggle-on") ||
-  //     iconSelect.closest(".output-box-toggle-off") ||
-  //     iconSelect.closest("#input-box");
-  //   closestBox.style.position = "relative";
-  //   closestBox.appendChild(dropdown);
-  //   this.currentDropdown = dropdown;
-  //   // 각 항목에 대한 이벤트 리스너 추가
-  //   dropdown.querySelectorAll(`.${optionClass}`).forEach((optionElement) => {
-  //     optionElement.addEventListener("click", () => {
-  //       chosenItemElement.textContent = optionElement.textContent;
-  //       let updateKey;
-  //       if (isLanguage) {
-  //         if (configIndex !== null) {
-  //           updateKey = "targetLang";
-  //         } else {
-  //           updateKey = "srcLang";
-  //         }
-  //       } else {
-  //         updateKey = "targetTool";
-  //       }
-  //       //컨트롤러로
-  //       callback(configIndex, updateKey, optionElement.textContent);
-  //       dropdown.remove();
-  //     });
-  //   });
-  // }
-
   // Toggle on/off
   toggleSwitch(iconToggle, configIndex, updateOutputConfig) {
     const outputBoxes = iconToggle.closest("#output-boxes");
@@ -213,7 +179,7 @@ class ClientView {
     // 상태 업데이트
     const newState = isToggleOn ? "off" : "on";
     updateOutputConfig(configIndex, "state", newState);
-    // Search closest lang-tool-select of closest output box(기존 선택 정보를 담음)
+    // Search closest lang-tool-select of closest output box(기존 박스의 언어, 번역기 선택창을 가져옴)
     const prevLangToolSelect = closestOutputBox.querySelector(
       ".language-tool-select"
     );
@@ -253,6 +219,62 @@ class ClientView {
           outputConfig.targetTool === targetTool
       ).targetText;
       boxToUpdate.querySelector(".box-text").textContent = targetText;
+    });
+  }
+
+  displayHistory(iconHistory, getOutputConfigs) {
+    console.log("iconHistory", iconHistory);
+
+    //가장 가까운 output-box 탐색
+    const closestOutputBox = iconHistory.closest(".output-box-toggle-on");
+    console.log("closestOutputBox", closestOutputBox);
+    const outputConfigs = getOutputConfigs();
+    console.log("outputConfigs", outputConfigs);
+    //가장 가까운 output-box의 index 탐색
+    const configIndex = Array.from(
+      closestOutputBox.parentNode.children
+    ).indexOf(closestOutputBox);
+    console.log("configIndex", configIndex);
+    //가장 가까운 output-box의 history 탐색
+    const history = outputConfigs[configIndex].history;
+    console.log("history", history);
+    //클래스 이름이 history인 div 생성
+    const historyDiv = document.createElement("div");
+    historyDiv.classList.add("history");
+    //history의 각 요소를 div로 만들어 historyDiv에 추가
+    const historyRecords = history.map((record) => {
+      const recordDiv = document.createElement("div");
+      recordDiv.classList.add("history-bar");
+      recordDiv.innerHTML = `
+      <div id="history-bar-time">
+        <div>${record.time}</div>
+      </div>
+      <div id="history-bar-text">
+        <div>${record.targetText}</div>
+      </div>
+      `;
+      return recordDiv;
+    });
+    historyRecords.forEach((record) => {
+      historyDiv.appendChild(record);
+    });
+    //가장 가까운 output-box에 historyDiv 추가
+    closestOutputBox.appendChild(historyDiv);
+    //historyDiv의 position을 absolute로 설정
+    closestOutputBox.style.position = "relative";
+    historyDiv.style.position = "absolute";
+    //historyDiv의 위치를 가장 가까운 output-box의 아래로 설정
+    historyDiv.style.top = "0";
+    historyDiv.style.left = "0";
+
+    //각 history-bar에 대해 클릭 이벤트 리스너 추가
+    historyDiv.querySelectorAll(".history-bar").forEach((historyBar) => {
+      historyBar.addEventListener("click", (e) => {
+        const targetText = historyBar.targetText;
+        const targetBox = closestOutputBox.querySelector(".box-text");
+        targetBox.textContent = targetText;
+        historyDiv.remove();
+      });
     });
   }
 }

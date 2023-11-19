@@ -39,6 +39,7 @@ class ClientModel {
         targetText: "",
         supportedTargetLangs: supportedLangs.deepL.targetLangs.sort(),
         supportedTargetTools: supportedTools.sort(),
+        history: [],
       };
     });
     console.log(this.inputConfig, this.outputConfigs);
@@ -91,7 +92,25 @@ class ClientModel {
         outputConfig.targetLang === targetLang &&
         outputConfig.targetTool === targetTool
       ) {
+        //targetText 업데이트
         outputConfig.targetText = targetText;
+
+        //history에 추가
+        const getNow = () => {
+          const date = new Date();
+          let hours = date.getHours();
+          let minutes = date.getMinutes();
+          hours = hours < 10 ? "0" + hours : hours;
+          minutes = minutes < 10 ? "0" + minutes : minutes;
+          return `${hours}:${minutes}`;
+        };
+
+        const history = {
+          time: getNow(),
+          targetText: targetText,
+        };
+
+        outputConfig.history.push(history);
       }
     });
   }
