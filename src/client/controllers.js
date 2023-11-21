@@ -42,7 +42,6 @@ class UiController {
 
     //main-flex event listeners(toolbar관련)
     document.querySelector("#main-flex").addEventListener("click", (event) => {
-      console.log("event target: ", event.target);
       if (event.target.matches("#icon-copy")) {
         this.util.copyText(event.target);
       } else if (event.target.matches("#icon-history, #icon-history *")) {
@@ -100,7 +99,7 @@ class AjaxController {
   applyTranslationResult(e) {
     const data = JSON.parse(e.data);
     //일단 데이터를 받아서 콘솔에 출력하는 것으로 테스트
-    console.log(data);
+    console.log("번역 결과: ", data);
 
     //데이터를 받아서 index와 일치하는 outputConfig의 targetText를 업데이트
     const { index, targetText } = data[0];
