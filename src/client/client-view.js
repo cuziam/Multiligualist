@@ -230,7 +230,6 @@ class ClientView {
     if (this.currentHistory) {
       this.currentHistory.remove();
       this.currentHistory = null;
-      return;
     }
     //가장 가까운 output-box 탐색
     const closestOutputBox = iconHistory.closest(

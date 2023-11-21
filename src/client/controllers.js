@@ -25,38 +25,45 @@ class UiController {
       this.clientView.displayRemainingLength();
     });
 
-    //toggle switch event listeners
-    const iconToggles = document.querySelectorAll(
-      "#icon-toggle-on, #icon-toggle-off"
-    );
+    // //toggle switch event listeners
+    // const iconToggles = document.querySelectorAll(
+    //   "#icon-toggle-on, #icon-toggle-off"
+    // );
 
-    iconToggles.forEach((iconToggle, idx) => {
-      iconToggle.addEventListener("click", () => {
-        clientView.toggleSwitch(
-          iconToggle,
-          idx,
-          this.clientModel.setConfig.bind(this.clientModel)
-        );
-      });
-    });
+    // iconToggles.forEach((iconToggle, idx) => {
+    //   iconToggle.addEventListener("click", () => {
+    //     clientView.toggleSwitch(
+    //       iconToggle,
+    //       idx,
+    //       this.clientModel.setConfig.bind(this.clientModel)
+    //     );
+    //   });
+    // });
 
     //main-flex event listeners(toolbar관련)
     document.querySelector("#main-flex").addEventListener("click", (event) => {
+      console.log("event target: ", event.target);
       if (event.target.matches("#icon-copy")) {
         this.util.copyText(event.target);
-      } else if (event.target.matches("#icon-history")) {
+      } else if (event.target.matches("#icon-history, #icon-history *")) {
         this.clientView.displayHistory(
           event.target,
           this.clientModel.getConfigs.bind(this.clientModel)
         );
-      } else if (event.target.matches("icon-toggle-on, icon-toggle-off")) {
+      } else if (
+        event.target.matches(
+          "icon-toggle-on, icon-toggle-on *, icon-toggle-off, icon-toggle-off *"
+        )
+      ) {
         this.clientView.toggleSwitch(
           event.target,
           idx,
           this.clientModel.setConfig.bind(this.clientModel)
         );
       } else if (
-        event.target.matches(".icon-language-select, .icon-translator-select")
+        event.target.matches(
+          ".icon-language-select, .icon-language-select *, .icon-translator-select, .icon-translator-select *"
+        )
       ) {
         this.clientView.displayDropdown(
           event.target,
