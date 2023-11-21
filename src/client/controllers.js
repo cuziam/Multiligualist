@@ -25,21 +25,6 @@ class UiController {
       this.clientView.displayRemainingLength();
     });
 
-    // //toggle switch event listeners
-    // const iconToggles = document.querySelectorAll(
-    //   "#icon-toggle-on, #icon-toggle-off"
-    // );
-
-    // iconToggles.forEach((iconToggle, idx) => {
-    //   iconToggle.addEventListener("click", () => {
-    //     clientView.toggleSwitch(
-    //       iconToggle,
-    //       idx,
-    //       this.clientModel.setConfig.bind(this.clientModel)
-    //     );
-    //   });
-    // });
-
     //main-flex event listeners(toolbar관련)
     document.querySelector("#main-flex").addEventListener("click", (event) => {
       if (event.target.matches("#icon-copy")) {
