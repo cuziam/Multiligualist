@@ -52,9 +52,14 @@ class UiController {
         );
       } else if (
         event.target.matches(
-          "icon-toggle-on, icon-toggle-on *, icon-toggle-off, icon-toggle-off *"
+          "#icon-toggle-on, #icon-toggle-on *, #icon-toggle-off, #icon-toggle-off *"
         )
       ) {
+        const outputBoxes = event.target.closest("#output-boxes");
+        const closestOutputBox = event.target.closest(
+          ".output-box-toggle-on, .output-box-toggle-off"
+        );
+        const idx = Array.from(outputBoxes.children).indexOf(closestOutputBox);
         this.clientView.toggleSwitch(
           event.target,
           idx,

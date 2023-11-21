@@ -194,13 +194,6 @@ class ClientView {
       ? this.BoxElements.outputBoxToggleOff.cloneNode(true)
       : this.BoxElements.outputBoxToggleOn.cloneNode(true);
 
-    //icon-toggle 교체, 이벤트 리스너 추가
-    newOutputBox
-      .querySelector("#icon-toggle-" + (isToggleOn ? "off" : "on"))
-      .addEventListener("click", () => {
-        this.toggleSwitch(newOutputBox, configIndex, setConfig);
-      });
-
     // language-tool-select 교체
     const elementToRemove = newOutputBox.querySelector(".language-tool-select");
     newOutputBox
