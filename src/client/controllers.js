@@ -25,22 +25,6 @@ class UiController {
       this.clientView.displayRemainingLength();
     });
 
-    //dropdown event listeners
-    const iconLangToolList = document.querySelectorAll(
-      ".icon-language-select, .icon-translator-select"
-    );
-    iconLangToolList.forEach((iconLangTool) => {
-      iconLangTool.addEventListener("click", () => {
-        console.log("clicked");
-        this.clientView.displayDropdown(
-          iconLangTool,
-          this.clientModel.getConfigs(),
-          this.clientModel.setConfig.bind(this.clientModel)
-        );
-        console.log("현재 정보", this.clientModel.getConfigs());
-      });
-    });
-
     //toggle switch event listeners
     const iconToggles = document.querySelectorAll(
       "#icon-toggle-on, #icon-toggle-off"
@@ -53,43 +37,33 @@ class UiController {
           idx,
           this.clientModel.setConfig.bind(this.clientModel)
         );
-        //index에 해당하는 outputBox에 이벤트 리스너 추가
-        const outputBox = document.querySelector("#output-boxes").children[idx];
-        console.log("outputBox: ", outputBox);
-        if (outputBox.className === "output-box-toggle-on") {
-          outputBox
-            .querySelector("#icon-copy")
-            .addEventListener("click", () => {
-              this.util.copyText(outputBox.querySelector("#icon-copy"));
-            });
-          outputBox
-            .querySelector("#icon-history")
-            .addEventListener("click", () => {
-              this.clientView.displayHistory(
-                outputBox.querySelector("#icon-history"),
-                this.clientModel.getConfigs.bind(this.clientModel)
-              );
-            });
-        }
       });
     });
 
-    const iconCopyList = document.querySelectorAll("#icon-copy");
-    iconCopyList.forEach((iconCopy) => {
-      iconCopy.addEventListener("click", () => {
-        this.util.copyText(iconCopy);
-      });
-    });
-
-    //history event listeners
-    const iconHistoryList = document.querySelectorAll("#icon-history");
-    iconHistoryList.forEach((iconHistory) => {
-      iconHistory.addEventListener("click", () => {
+    //main-flex event listeners(toolbar관련)
+    document.querySelector("#main-flex").addEventListener("click", (event) => {
+      if (event.target.matches("#icon-copy")) {
+        this.util.copyText(event.target);
+      } else if (event.target.matches("#icon-history")) {
         this.clientView.displayHistory(
-          iconHistory,
+          event.target,
           this.clientModel.getConfigs.bind(this.clientModel)
         );
-      });
+      } else if (event.target.matches("icon-toggle-on, icon-toggle-off")) {
+        this.clientView.toggleSwitch(
+          event.target,
+          idx,
+          this.clientModel.setConfig.bind(this.clientModel)
+        );
+      } else if (
+        event.target.matches(".icon-language-select, .icon-translator-select")
+      ) {
+        this.clientView.displayDropdown(
+          event.target,
+          this.clientModel.getConfigs(),
+          this.clientModel.setConfig.bind(this.clientModel)
+        );
+      }
     });
   }
 }
