@@ -17,6 +17,7 @@ class ClientModel {
         document.querySelector("#input-box #input-box-textarea").value || "",
       //srcLang 지원 언어는 deepL의 지원 언어로 임시로 고정
       supportedSrcLangs: supportedLangs.deepL.srcLangs.sort(),
+      history: [],
     };
 
     // 박스의 종류와 언어, 번역기를 저장
@@ -60,59 +61,45 @@ class ClientModel {
     return this.outputConfigs;
   }
 
-  updateInputConfig(key, newValue) {
-    if (!this.inputConfig[key]) {
-      console.log("key not found");
-      return;
-    }
-    this.inputConfig[key] = newValue;
-  }
-  updateOutputConfig(configIndex, key, newValue) {
-    console.log(this.outputConfigs);
-    if (!this.outputConfigs[configIndex][key]) {
-      console.log("key not found");
-      return;
-    }
-    this.outputConfigs[configIndex][key] = newValue;
-  }
   setConfig(configIndex, key, newValue) {
     if (configIndex === null || configIndex === undefined) {
       this.inputConfig[key] = newValue;
       return;
     }
-    if (!this.outputConfigs[configIndex][key]) {
-      console.log("key not found");
+    if (!this.outputConfigs[configIndex]) {
+      console.log(`configIndex ${configIndex} not found`);
+    }
+    if (!this.outputConfigs[configIndex].hasOwnProperty(key)) {
+      console.log(`key not found(configIndex ${configIndex}, key ${key})`);
       return;
     }
     this.outputConfigs[configIndex][key] = newValue;
   }
-  setOutputConfigTargetText(targetLang, targetTool, targetText) {
-    this.outputConfigs.forEach((outputConfig) => {
-      if (
-        outputConfig.targetLang === targetLang &&
-        outputConfig.targetTool === targetTool
-      ) {
-        //targetText 업데이트
-        outputConfig.targetText = targetText;
 
-        //history에 추가
-        const getNow = () => {
-          const date = new Date();
-          let hours = date.getHours();
-          let minutes = date.getMinutes();
-          hours = hours < 10 ? "0" + hours : hours;
-          minutes = minutes < 10 ? "0" + minutes : minutes;
-          return `${hours}:${minutes}`;
-        };
-
-        const history = {
-          time: getNow(),
-          targetText: targetText,
-        };
-
-        outputConfig.history.push(history);
-      }
-    });
+  addHistory(configIndex, text) {
+    //history에 추가
+    const getNow = () => {
+      const date = new Date();
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      return `${hours}:${minutes}`;
+    };
+    if (configIndex === "undefined" || configIndex === null) {
+      this.inputConfig.history.unshift({
+        time: getNow(),
+        srcText: text,
+      });
+      console.log("history:", this.inputConfig.history);
+      return;
+    } else {
+      this.outputConfigs[configIndex].history.unshift({
+        time: getNow(),
+        targetText: text,
+      });
+      console.log("history:", this.outputConfigs[configIndex].history);
+    }
   }
 }
 module.exports = ClientModel;

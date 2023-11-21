@@ -2,17 +2,23 @@
 class ClientView {
   constructor() {
     this.currentDropdown = null;
+    this.currentHistory = null;
     this.BoxElements = {
       inputBox: document.querySelector("#input-box"),
       outputBoxToggleOn: document
         .querySelector(".output-box-toggle-on")
         .cloneNode(true),
+
       outputBoxToggleOff: document
         .querySelector(".output-box-toggle-off")
         .cloneNode(true),
     };
   }
 
+  resetDisplay() {
+    this.currentDropdown = null;
+    this.currentHistory = null;
+  }
   // zoom window along with screen resolution
   adjustZoomLevel(window) {
     let width = window.innerWidth;
@@ -169,7 +175,7 @@ class ClientView {
   }
 
   // Toggle on/off
-  toggleSwitch(iconToggle, configIndex, updateOutputConfig) {
+  toggleSwitch(iconToggle, configIndex, setConfig) {
     const outputBoxes = iconToggle.closest("#output-boxes");
     const isToggleOn = iconToggle.closest(".output-box-toggle-on");
     const closestOutputBox = isToggleOn
@@ -178,23 +184,24 @@ class ClientView {
 
     // 상태 업데이트
     const newState = isToggleOn ? "off" : "on";
-    updateOutputConfig(configIndex, "state", newState);
+    setConfig(configIndex, "state", newState);
     // Search closest lang-tool-select of closest output box(기존 박스의 언어, 번역기 선택창을 가져옴)
     const prevLangToolSelect = closestOutputBox.querySelector(
       ".language-tool-select"
     );
-
-    // load new output box & change contents to match closest output box=>문서에 해당요소가 없으면?
+    // load new output box & change contents to match closest output box
     const newOutputBox = isToggleOn
       ? this.BoxElements.outputBoxToggleOff.cloneNode(true)
       : this.BoxElements.outputBoxToggleOn.cloneNode(true);
 
-    newOutputBox
-      .querySelector("#icon-toggle-" + (isToggleOn ? "off" : "on"))
-      .addEventListener("click", () => {
-        this.toggleSwitch(newOutputBox, configIndex, updateOutputConfig);
-      });
+    // //icon-toggle 교체, 이벤트 리스너 추가
+    // newOutputBox
+    //   .querySelector("#icon-toggle-" + (isToggleOn ? "off" : "on"))
+    //   .addEventListener("click", () => {
+    //     this.toggleSwitch(newOutputBox, configIndex, setConfig);
+    //   });
 
+    // language-tool-select 교체
     const elementToRemove = newOutputBox.querySelector(".language-tool-select");
     newOutputBox
       .querySelector(".output-lang-select")
@@ -205,38 +212,53 @@ class ClientView {
   }
 
   //outputConfigs를 이용해 outputBox의 내용을 업데이트
-  updateTargetText(configs) {
+  displayTargetText(configs, index) {
+    console.log(`update targetText of index ${index}`);
     const { outputConfigs } = configs;
-    const boxesToUpdate = document.querySelectorAll(".output-box-toggle-on");
-    boxesToUpdate.forEach((boxToUpdate) => {
-      const targetLang = boxToUpdate.querySelector(".chosen-lang").textContent;
-      const targetTool = boxToUpdate.querySelector(".chosen-tool").textContent;
-
-      console.log(targetLang, targetTool, outputConfigs);
-      const targetText = outputConfigs.find(
-        (outputConfig) =>
-          outputConfig.targetLang === targetLang &&
-          outputConfig.targetTool === targetTool
-      ).targetText;
-      boxToUpdate.querySelector(".box-text").textContent = targetText;
-    });
+    const outputBoxes = document.querySelectorAll(
+      ".output-box-toggle-on, .output-box-toggle-off"
+    );
+    const boxTextEle = outputBoxes[index].querySelector(".box-text");
+    console.log("boxTextEle", boxTextEle);
+    boxTextEle.textContent = outputConfigs[index].targetText;
+    return;
   }
 
-  displayHistory(iconHistory, getOutputConfigs) {
+  displayHistory(iconHistory, getConfigs) {
     console.log("iconHistory", iconHistory);
-
+    //이전에 표시된 history 삭제
+    if (this.currentHistory) {
+      this.currentHistory.remove();
+      this.currentHistory = null;
+      return;
+    }
     //가장 가까운 output-box 탐색
-    const closestOutputBox = iconHistory.closest(".output-box-toggle-on");
-    console.log("closestOutputBox", closestOutputBox);
-    const outputConfigs = getOutputConfigs();
-    console.log("outputConfigs", outputConfigs);
-    //가장 가까운 output-box의 index 탐색
-    const configIndex = Array.from(
-      closestOutputBox.parentNode.children
-    ).indexOf(closestOutputBox);
-    console.log("configIndex", configIndex);
+    const closestOutputBox = iconHistory.closest(
+      ".output-box-toggle-on , #input-box"
+    );
+    const { inputConfig, outputConfigs } = getConfigs();
+    const isInputBox = closestOutputBox.id === "input-box";
+
+    //가장 가까운 output-box의 history를 반환하는 헬퍼 함수
+    const getHistory = (isInputBox) => {
+      if (isInputBox) {
+        return inputConfig.history;
+      } else {
+        const configIndex = Array.from(
+          closestOutputBox.parentNode.children
+        ).indexOf(closestOutputBox);
+        console.log("configIndex", configIndex);
+        return outputConfigs[configIndex].history;
+      }
+    };
+    //history가 없다면 간단한 알림창을 띄운다.
+    if (getHistory(isInputBox).length === 0) {
+      alert("No history");
+      return;
+    }
+
     //가장 가까운 output-box의 history 탐색
-    const history = outputConfigs[configIndex].history;
+    const history = getHistory(isInputBox);
     console.log("history", history);
     //클래스 이름이 history인 div 생성
     const historyDiv = document.createElement("div");
@@ -250,7 +272,7 @@ class ClientView {
         <div>${record.time}</div>
       </div>
       <div id="history-bar-text">
-        <div>${record.targetText}</div>
+        <div>${record.targetText || record.srcText}</div>
       </div>
       `;
       return recordDiv;
@@ -266,13 +288,21 @@ class ClientView {
     //historyDiv의 위치를 가장 가까운 output-box의 아래로 설정
     historyDiv.style.top = "0";
     historyDiv.style.left = "0";
+    //현재 표시된 historyDiv로 설정
+    this.currentHistory = historyDiv;
 
     //각 history-bar에 대해 클릭 이벤트 리스너 추가
     historyDiv.querySelectorAll(".history-bar").forEach((historyBar) => {
       historyBar.addEventListener("click", (e) => {
-        const targetText = historyBar.targetText;
+        const targetText = historyBar.querySelector(
+          "#history-bar-text div"
+        ).textContent;
         const targetBox = closestOutputBox.querySelector(".box-text");
-        targetBox.textContent = targetText;
+        if (targetBox.tagName === "TEXTAREA") {
+          targetBox.value = targetText;
+        } else {
+          targetBox.textContent = targetText;
+        }
         historyDiv.remove();
       });
     });

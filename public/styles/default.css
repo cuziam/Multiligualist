@@ -401,26 +401,6 @@ svg:hover title {
   display: block;
 }
 
-.history-list {
-  display: none; /* Hidden by default */
-  box-sizing: border-box;
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: auto;
-
-  width: 37.5rem;
-  height: 14rem;
-  padding: 1rem;
-  gap: 2rem 7.5rem;
-  flex-wrap: wrap;
-
-  border-radius: 0rem 0rem 0.5rem 0.5rem;
-  border: 2px solid var(--border-default, #d9d9d9);
-  background: var(--grid-background-default, #fafafa);
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-}
-
 /* dropdown menu */
 .lang-dropdown,
 .tool-dropdown {
@@ -483,11 +463,10 @@ svg:hover title {
   width: 37.5rem;
   height: 18rem;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   flex-shrink: 0;
   overflow: auto;
-  box-sizing: border-box;
 
   border-radius: 0rem 0rem 0.5rem 0.5rem;
   border: 2px solid var(--border-default, #d9d9d9);
@@ -508,12 +487,12 @@ svg:hover title {
 .history-bar {
   display: flex;
   width: 37.5rem;
-  height: 3rem;
   justify-content: center;
   align-items: flex-start;
   flex-shrink: 0;
   border: 2px solid var(--border-default, #d9d9d9);
   background: var(--grid-background-default, #fafafa);
+  box-sizing: border-box;
 }
 
 #history-bar-time {
@@ -557,6 +536,7 @@ svg:hover title {
   width: 30rem;
   height: 2rem;
   flex-shrink: 0;
+  overflow: hidden;
 
   color: var(--logo-default);
   font-family: Noto Sans;
@@ -566,7 +546,7 @@ svg:hover title {
   line-height: normal;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 730px) {
   /* mobile responsive box*/
   #html {
     width: 100%;

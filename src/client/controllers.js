@@ -6,10 +6,14 @@ class UiController {
     this.clientModel = clientModel;
     this.clientView = clientView;
     this.util = require("./util");
-    this.setEventListeners();
+    this.initEventListeners();
   }
 
-  setEventListeners() {
+  addEventListenerToNode(node, event, callback) {
+    node.addEventListener(event, callback);
+  }
+
+  initEventListeners() {
     //zoom event listener
     window.addEventListener("load", () => {
       clientView.adjustZoomLevel(window);
@@ -47,8 +51,26 @@ class UiController {
         clientView.toggleSwitch(
           iconToggle,
           idx,
-          this.clientModel.updateOutputConfig.bind(this.clientModel)
+          this.clientModel.setConfig.bind(this.clientModel)
         );
+        //index에 해당하는 outputBox에 이벤트 리스너 추가
+        const outputBox = document.querySelector("#output-boxes").children[idx];
+        console.log("outputBox: ", outputBox);
+        if (outputBox.className === "output-box-toggle-on") {
+          outputBox
+            .querySelector("#icon-copy")
+            .addEventListener("click", () => {
+              this.util.copyText(outputBox.querySelector("#icon-copy"));
+            });
+          outputBox
+            .querySelector("#icon-history")
+            .addEventListener("click", () => {
+              this.clientView.displayHistory(
+                outputBox.querySelector("#icon-history"),
+                this.clientModel.getConfigs.bind(this.clientModel)
+              );
+            });
+        }
       });
     });
 
@@ -65,7 +87,7 @@ class UiController {
       iconHistory.addEventListener("click", () => {
         this.clientView.displayHistory(
           iconHistory,
-          this.clientModel.getOutputConfigs.bind(this.clientModel)
+          this.clientModel.getConfigs.bind(this.clientModel)
         );
       });
     });
@@ -78,11 +100,11 @@ class AjaxController {
     this.clientModel = clientModel;
     this.clientView = clientView;
     this.eventSource = null;
-    this.setEventListeners();
+    this.initEventListeners();
   }
 
   //Ajax와 관련된 event listener를 추가
-  setEventListeners() {
+  initEventListeners() {
     const btnTranslate = document.querySelector("#btn-translate");
     btnTranslate.addEventListener("click", () => {
       this.translate();
@@ -93,14 +115,17 @@ class AjaxController {
     const data = JSON.parse(e.data);
     //일단 데이터를 받아서 콘솔에 출력하는 것으로 테스트
     console.log(data);
-    //데이터를 받아서 outputConfigs를 업데이트
-    const { targetLang, targetText, targetTool } = data[0];
-    this.clientModel.setOutputConfigTargetText(
-      targetLang,
-      targetTool,
-      targetText
-    );
-    this.clientView.updateTargetText(this.clientModel.getConfigs());
+
+    //데이터를 받아서 index와 일치하는 outputConfig의 targetText를 업데이트
+    const { index, targetText } = data[0];
+    console.log(`index: ${index}번에 응답이 왔습니다.`);
+    this.clientModel.setConfig(index, "targetText", targetText);
+
+    //history에 targetText추가
+    this.clientModel.addHistory(index, targetText);
+
+    //outputBox의 targetText를 출력
+    this.clientView.displayTargetText(this.clientModel.getConfigs(), index);
   }
 
   // SSE를 이용해 번역 결과를 받아옴
@@ -120,27 +145,30 @@ class AjaxController {
     const { inputConfig, outputConfigs } = this.clientModel.getConfigs();
     const { srcLang } = inputConfig;
     const srcText = document.querySelector("#input-box-textarea").value;
+    //input-box의 history에 srcText추가
+    this.clientModel.addHistory(null, srcText);
 
     // outputConfig의 요소 중 state가 on인 것만 필터링
-    const filteredOutputConfigs = outputConfigs.filter(
-      (outputConfig) => outputConfig.state === "on"
-    );
-    const dataToSendArr = filteredOutputConfigs.map((outputConfig) => {
-      const { targetLang, targetTool } = outputConfig;
-      return {
-        srcLang: srcLang,
-        srcText: srcText,
-        targetLang: targetLang,
-        targetTool: targetTool,
-      };
-    });
+    const dataToSendArr = [];
+    for (let i = 0; i < outputConfigs.length; i++) {
+      if (outputConfigs[i].state === "on") {
+        const dataToSend = {
+          index: i,
+          srcLang: srcLang,
+          srcText: srcText,
+          targetLang: outputConfigs[i].targetLang,
+          targetTool: outputConfigs[i].targetTool,
+        };
+        dataToSendArr.push(dataToSend);
+      }
+    }
 
     //데이터를 json형식으로 변환
-    const dataToSend = JSON.stringify(dataToSendArr);
-    console.log("보낼 데이터: ", dataToSend);
+    const stringfiedData = JSON.stringify(dataToSendArr);
+    console.log("보낼 데이터: ", stringfiedData);
 
     //axios를 이용해 post요청을 보냄
-    const response = await this.axios.post("/translate", dataToSend, {
+    const response = await this.axios.post("/translate", stringfiedData, {
       headers: {
         "Content-Type": "application/json",
       },

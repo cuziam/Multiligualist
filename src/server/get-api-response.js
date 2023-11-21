@@ -25,7 +25,7 @@ function sendEvents(req, res) {
 }
 
 //post요청이 /으로 들어오면 papago api로 데이터들을 보내고 응답을 받은 후에 응답내용을 클라이언트에게 보내준다.
-const translatePapago = async function (srcText, srcLang, targetLang) {
+const translatePapago = async function (index, srcText, srcLang, targetLang) {
   console.log(srcText, srcLang, targetLang);
   const clientId = process.env.NAVER_CLIENT_ID;
   const clientSecret = process.env.NAVER_CLIENT_SECRET;
@@ -51,6 +51,7 @@ const translatePapago = async function (srcText, srcLang, targetLang) {
     );
     translationEvents.emit("update", [
       {
+        index: index,
         srcLang: ISOCodeToLanguage(srcLang),
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: response.data.message.result.translatedText,
@@ -61,6 +62,7 @@ const translatePapago = async function (srcText, srcLang, targetLang) {
     console.log("papago 번역 실패: ", error.response.data);
     translationEvents.emit("update", [
       {
+        index: index,
         srcLang: ISOCodeToLanguage(srcLang),
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: error.response.data.errorMessage,
@@ -75,7 +77,7 @@ const translationClient = new TranslationServiceClient();
 
 const projectId = process.env.GOOGLE_PROJECT_ID;
 const location = process.env.GOOGLE_LOCATION;
-const translateGoogle = async function (srcText, srcLang, targetLang) {
+const translateGoogle = async function (index, srcText, srcLang, targetLang) {
   console.log(srcText, srcLang, targetLang);
   const request = {
     parent: `projects/${projectId}/locations/${location}`,
@@ -89,6 +91,7 @@ const translateGoogle = async function (srcText, srcLang, targetLang) {
     console.log("Google 번역 성공: ", response.translations[0].translatedText);
     translationEvents.emit("update", [
       {
+        index: index,
         srcLang: ISOCodeToLanguage(srcLang),
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: response.translations[0].translatedText,
@@ -99,6 +102,7 @@ const translateGoogle = async function (srcText, srcLang, targetLang) {
     console.log("Google 번역 실패: ", error);
     translationEvents.emit("update", [
       {
+        index: index,
         srcLang: ISOCodeToLanguage(srcLang),
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: error.details,
@@ -111,7 +115,7 @@ const translateGoogle = async function (srcText, srcLang, targetLang) {
 const deepl = require("deepl-node");
 const authKey = process.env.DEEPL_AUTH_KEY;
 const translator = new deepl.Translator(authKey);
-const translateDeepl = async function (srcText, srcLang, targetLang) {
+const translateDeepl = async function (index, srcText, srcLang, targetLang) {
   console.log(srcText, srcLang, targetLang);
   try {
     const response = await translator.translateText(
@@ -122,6 +126,7 @@ const translateDeepl = async function (srcText, srcLang, targetLang) {
     console.log("DeepL 번역 성공: ", response.text);
     translationEvents.emit("update", [
       {
+        index: index,
         srcLang: ISOCodeToLanguage(srcLang),
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: response.text,
@@ -132,6 +137,7 @@ const translateDeepl = async function (srcText, srcLang, targetLang) {
     console.log("DeepL 번역 실패:", error);
     translationEvents.emit("update", [
       {
+        index: index,
         srcLang: ISOCodeToLanguage(srcLang),
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: error.message,
@@ -143,18 +149,18 @@ const translateDeepl = async function (srcText, srcLang, targetLang) {
 
 function translateClientReq(reqBody) {
   reqBody.forEach((config) => {
-    let { srcLang, srcText, targetLang, targetTool } = config;
+    let { srcLang, srcText, targetLang, targetTool, index } = config;
     //normalize each string
     srcLang = languageToISOCode(srcLang);
     targetLang = languageToISOCode(targetLang);
 
     //call the appropriate translation function
     if (targetTool === "Papago") {
-      translatePapago(srcText, srcLang, targetLang);
+      translatePapago(index, srcText, srcLang, targetLang);
     } else if (targetTool === "Google Translator") {
-      translateGoogle(srcText, srcLang, targetLang);
+      translateGoogle(index, srcText, srcLang, targetLang);
     } else if (targetTool === "DeepL") {
-      translateDeepl(srcText, srcLang, targetLang);
+      translateDeepl(index, srcText, srcLang, targetLang);
     }
   });
 }

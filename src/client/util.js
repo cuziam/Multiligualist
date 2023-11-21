@@ -12,11 +12,10 @@ function copyText(iconCopy) {
   }
   navigator.clipboard.writeText(copiedText);
 
-  //show info of copied text
-  const numOfCopiedText = copiedText.length;
-  const sampleText = copiedText.slice(0, 30).concat("...");
-  console.log("copy text: ", sampleText);
-  console.log("copied text length: ", numOfCopiedText);
+  alert("text copied to clipboard");
+  // Show the copied text
+  // const tooltip = document.getElementById("myTooltip");
+  // tooltip.innerHTML = "Copied: " + copiedText;
 }
 
 module.exports = {
