@@ -467,6 +467,7 @@ svg:hover title {
   align-items: flex-start;
   flex-shrink: 0;
   overflow: auto;
+  box-sizing: border-box;
 
   border-radius: 0rem 0rem 0.5rem 0.5rem;
   border: 2px solid var(--border-default, #d9d9d9);
@@ -556,19 +557,19 @@ svg:hover title {
     width: 100%;
     box-sizing: border-box;
     padding: 0 1rem;
+    margin: 1rem 0;
   }
 
   #input-box {
     width: 100%;
-    height: 80%;
   }
-
   form {
     width: 100%;
   }
   .box-input-lang-select {
     width: 100%;
   }
+
   .input-lang-select {
     width: 100%;
   }
@@ -586,16 +587,15 @@ svg:hover title {
     gap: 0;
   }
 
+  #output-boxes {
+    width: 100%;
+  }
   .chosen-lang {
     font-size: 1rem;
   }
   .chosen-tool {
     font-size: 1rem;
   }
-  #output-boxes {
-    width: 100%;
-  }
-
   .output-box-toggle-on {
     width: 100%;
   }
@@ -613,6 +613,9 @@ svg:hover title {
     width: 100%;
   }
 
+  .box-output-lang-select {
+    padding: 0.25rem;
+  }
   .output-lang-select {
     width: 100%;
     gap: 0;
@@ -634,5 +637,11 @@ svg:hover title {
   }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 456px) {
+  .chosen-lang {
+    font-size: 0.75rem;
+  }
+  .chosen-tool {
+    font-size: 0.75rem;
+  }
 }
