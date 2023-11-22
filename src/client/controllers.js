@@ -59,6 +59,8 @@ class UiController {
           this.clientModel.getConfigs(),
           this.clientModel.setConfig.bind(this.clientModel)
         );
+      } else {
+        return;
       }
     });
   }

@@ -27,21 +27,22 @@ function sendEvents(req, res) {
 //post요청이 /으로 들어오면 papago api로 데이터들을 보내고 응답을 받은 후에 응답내용을 클라이언트에게 보내준다.
 const translatePapago = async function (index, srcText, srcLang, targetLang) {
   console.log(srcText, srcLang, targetLang);
-  const clientId = process.env.NAVER_CLIENT_ID;
-  const clientSecret = process.env.NAVER_CLIENT_SECRET;
-  const apiUrl = "https://openapi.naver.com/v1/papago/n2mt";
+  const clientId = process.env.X_NCP_APIGW_API_KEY_ID;
+  const clientSecret = process.env.X_NCP_APIGW_API_KEY;
+  const apiUrl = "	https://naveropenapi.apigw.ntruss.com/nmt/v1/translation";
 
   const options = {
     method: "POST",
     url: apiUrl,
     headers: {
-      "X-Naver-Client-Id": clientId,
-      "X-Naver-Client-Secret": clientSecret,
+      "X-NCP-APIGW-API-KEY-ID": clientId,
+      "X-NCP-APIGW-API-KEY": clientSecret,
     },
-    data: `source=${srcLang}&target=${ISOCodeForTargetTool(
-      targetLang,
-      "Papago"
-    )}&text=${encodeURIComponent(srcText)}`,
+    data: {
+      source: srcLang,
+      target: targetLang,
+      text: srcText,
+    },
   };
   try {
     const response = await axios(options);
@@ -59,13 +60,20 @@ const translatePapago = async function (index, srcText, srcLang, targetLang) {
       },
     ]);
   } catch (error) {
-    console.log("papago 번역 실패: ", error.response.data);
+    console.log("papago 번역 실패: ", error.response.data.error);
+    const errorCode = error.response.data.error.errorCode;
+    let textToSend;
+    if (100 <= Number(errorCode) && Number(errorCode) <= 900) {
+      textToSend = "Server Error: Sorry... Please try again later.";
+    } else {
+      textToSend = error.response.data.error.message;
+    }
     translationEvents.emit("update", [
       {
         index: index,
         srcLang: ISOCodeToLanguage(srcLang),
         targetLang: ISOCodeToLanguage(targetLang),
-        targetText: error.response.data.errorMessage,
+        targetText: textToSend,
         targetTool: "Papago",
       },
     ]);
