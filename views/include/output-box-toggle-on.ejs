@@ -2,7 +2,9 @@
   <div class="box-output-lang-select">
     <div class="output-lang-select">
       <div class="language-tool-select">
-        <%-include('icon-lang-tool-select') %>
+        <% if (tool==='Google Translator') { %>
+        <%-include('icon-lang-tool-select') %> <% } else {%>
+        <%-include('icon-lang-tool-select-b') %> <% } %>
       </div>
       <svg
         id="icon-toggle-on"
