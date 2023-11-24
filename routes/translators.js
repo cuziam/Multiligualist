@@ -1,10 +1,18 @@
 const express = require("express");
 const router = express.Router();
+
+//user-defined modules
 const { languageToISOCode, ISOCodeToLanguage } = require("../src/server/util");
 const {
   translateClientReq,
   sendEvents,
 } = require("../src/server/get-api-response");
+const { configureCsrf } = require("../security/csrf");
+
+router.use((req, res, next) => {
+  configureCsrf(req, res);
+  next();
+});
 
 router.get("/", (req, res) => {
   // 클라이언트가 선호하는 언어를 파악
