@@ -14,7 +14,20 @@ router.use((req, res, next) => {
   next();
 });
 
+//session
+const { doubleCsrfProtection, generateToken } = doubleCsrf({
+  getSecret: (req) => process.env.CSRF_SECRET,
+});
+
+router.use(doubleCsrfProtection);
 router.get("/", (req, res) => {
+  try {
+    const csrfToken = generateToken(req, res);
+  } catch (err) {
+    console.log(err);
+  }
+
+  console.log(csrfToken);
   // 클라이언트가 선호하는 언어를 파악
   const preferredLanguages = req.acceptsLanguages();
   res.locals.preferredLanguage =
