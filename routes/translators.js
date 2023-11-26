@@ -1,3 +1,4 @@
+//module imports
 const express = require("express");
 const router = express.Router();
 
@@ -7,28 +8,14 @@ const {
   translateClientReq,
   sendEvents,
 } = require("../src/server/get-api-response");
+const { sessionMiddleware } = require("../src/server/session-controller");
 const { configureCsrf } = require("../security/csrf");
 
-router.use((req, res, next) => {
-  configureCsrf(req, res);
-  next();
-});
+router.use(sessionMiddleware);
 
-//session
-const { doubleCsrfProtection, generateToken } = doubleCsrf({
-  getSecret: (req) => process.env.CSRF_SECRET,
-});
-
-router.use(doubleCsrfProtection);
-router.get("/", (req, res) => {
-  try {
-    const csrfToken = generateToken(req, res);
-  } catch (err) {
-    console.log(err);
-  }
-
-  console.log(csrfToken);
-  // 클라이언트가 선호하는 언어를 파악
+router.get("/", async (req, res) => {
+  req.session.name = "test";
+  await req.session.save();
   const preferredLanguages = req.acceptsLanguages();
   res.locals.preferredLanguage =
     ISOCodeToLanguage(preferredLanguages[0]) ||
@@ -37,6 +24,11 @@ router.get("/", (req, res) => {
     "English";
   res.render("landing-page");
 });
+
+// router.use((req, res, next) => {
+//   configureCsrf(req, res);
+//   next();
+// });
 
 router.get("/events", (req, res) => {
   sendEvents(req, res);
