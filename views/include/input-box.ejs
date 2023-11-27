@@ -1,4 +1,5 @@
 <div id="input-box">
+  <form action="/translate" method="post">
   <div class="box-input-lang-select">
     <div class="input-lang-select">
       <%- include('icon-select') %>
@@ -18,20 +19,22 @@
         <title>Language Change</title>
       </svg>
     </div>
+  </form>
   </div>
-  <form action="/" method="post">
     <textarea
       id="input-box-textarea"
       class="box-text"
       type="text"
       placeholder="Please enter what you want to translate..."
+      maxlength="1000"
     ></textarea>
+    <p class="text-count">0/1000</p>
   </form>
+
   <div id="input-box-toolbar">
     <div class="tooltips">
       <%- include('icon-copy') %> <%- include('icon-history') %>
     </div>
     <button id="btn-translate">Translate</button>
   </div>
-  <div></div>
 </div>

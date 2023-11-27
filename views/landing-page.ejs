@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <link rel="stylesheet" href="../public/styles/default.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -10,12 +11,11 @@
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Righteous&display=swap"
       rel="stylesheet"
     />
-    <script src="../public/scripts/util.js" defer></script>
-    <script src="../public/scripts/dropdown.js" defer></script>
+    <script src="../public/dist/bundle.js" defer></script>
     <title>Translators</title>
     <link
       rel="icon"
-      href="/public/styles/icons/favicon.ico"
+      href="/public/images/icons/favicon.ico"
       type="image/x-icon"
     />
   </head>
@@ -24,13 +24,10 @@
     <main id="main-flex">
       <%- include('include/input-box') %>
       <div id="output-boxes">
-        <% for(let i=0; i<2; i++ ){ %> <%-
-        include('include/output-box-toggle-on') %> <% }%> <%-
-        include('include/output-box-toggle-off') %>
+        <%-include('include/output-box-toggle-on',{tool: 'Google Translator'})
+        %> <%-include('include/output-box-toggle-on',{tool: 'DeepL'}) %>
+        <%-include('include/output-box-toggle-off') %>
       </div>
     </main>
-    <%- include('include/dropdown-languages') %> <%-
-    include('include/dropdown-Translators') %>
-    <footer></footer>
   </body>
 </html>
