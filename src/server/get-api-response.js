@@ -41,7 +41,7 @@ const translatePapago = async function (index, srcText, srcLang, targetLang) {
     },
     data: {
       source: srcLang,
-      target: targetLang,
+      target: ISOCodeForTargetTool(targetLang, "Papago"),
       text: srcText,
     },
   };
