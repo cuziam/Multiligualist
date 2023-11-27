@@ -32,7 +32,7 @@ const createSessionConfig = (sessionStore) => {
     cookie: {
       httpOnly: false,
       secure: false,
-      maxAge: 1000 * 60 * 60 * 24 * 7, //쿠키의 유효기간을 설정한다.
+      maxAge: 1000 * 60 * 60 * 24 * 7, //쿠키의 유효기간 7일
     },
   };
 };
@@ -40,7 +40,6 @@ const createSessionConfig = (sessionStore) => {
 const sessionStore = createSessionStore();
 const sessionConfig = createSessionConfig(sessionStore);
 const sessionMiddleware = session(sessionConfig);
-console.log(sessionMiddleware);
 
 module.exports = {
   sessionMiddleware,

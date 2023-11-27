@@ -36,8 +36,8 @@ class ClientView {
     const inputTextLength = document.querySelector("#input-box .box-text").value
       .length;
     const textCountEle = document.querySelector("#input-box .text-count");
-    textCountEle.textContent = `${inputTextLength}/2000`;
-    if (inputTextLength >= 2000) {
+    textCountEle.textContent = `${inputTextLength}/1000`;
+    if (inputTextLength >= 1000) {
       textCountEle.style.color = "red";
     } else {
       textCountEle.style.color = "var(--text-default)";

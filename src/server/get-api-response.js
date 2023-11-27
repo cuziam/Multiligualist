@@ -8,6 +8,7 @@ const {
   ISOCodeToLanguage,
   ISOCodeForTargetTool,
 } = require("./util");
+const xss = require("xss");
 
 function sendEvents(req, res) {
   res.writeHead(200, {
@@ -77,6 +78,7 @@ const translatePapago = async function (index, srcText, srcLang, targetLang) {
         targetTool: "Papago",
       },
     ]);
+    throw error;
   }
 };
 
@@ -117,6 +119,7 @@ const translateGoogle = async function (index, srcText, srcLang, targetLang) {
         targetTool: "Google Translator",
       },
     ]);
+    throw error;
   }
 };
 
@@ -152,26 +155,38 @@ const translateDeepl = async function (index, srcText, srcLang, targetLang) {
         targetTool: "DeepL",
       },
     ]);
+    throw error;
   }
 };
 
-function translateClientReq(reqBody) {
-  reqBody.forEach((config) => {
+const translateClientReq = async function (reqBody) {
+  const translationResults = [];
+
+  for (const config of reqBody) {
     let { srcLang, srcText, targetLang, targetTool, index } = config;
-    //normalize each string
     srcLang = languageToISOCode(srcLang);
     targetLang = languageToISOCode(targetLang);
+    srcText = xss(srcText);
 
-    //call the appropriate translation function
+    let result;
     if (targetTool === "Papago") {
-      translatePapago(index, srcText, srcLang, targetLang);
+      result = await translatePapago(index, srcText, srcLang, targetLang)
+        .then(() => true)
+        .catch(() => false);
     } else if (targetTool === "Google Translator") {
-      translateGoogle(index, srcText, srcLang, targetLang);
+      result = await translateGoogle(index, srcText, srcLang, targetLang)
+        .then(() => true)
+        .catch(() => false);
     } else if (targetTool === "DeepL") {
-      translateDeepl(index, srcText, srcLang, targetLang);
+      result = await translateDeepl(index, srcText, srcLang, targetLang)
+        .then(() => true)
+        .catch(() => false);
     }
-  });
-}
+    translationResults.push(result);
+  }
+
+  return translationResults;
+};
 
 module.exports = {
   translatePapago,
