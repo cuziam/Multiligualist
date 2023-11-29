@@ -8,9 +8,9 @@ const session = require("express-session");
 const MongodbStore = require("connect-mongodb-session")(session);
 
 //새로운 mongodbStore 인스턴스를 생성한다.
-const createSessionStore = async () => {
+const createSessionStore = () => {
   try {
-    const mongodbStore = await new MongodbStore({
+    const mongodbStore = new MongodbStore({
       uri: "mongodb://127.0.0.1:27017",
       databaseName: "translators",
       collection: "session",
