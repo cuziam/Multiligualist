@@ -57,4 +57,8 @@ router.post("/translate", async (req, res) => {
   }
 });
 
+router.get("/healthcheck", (req, res) => {
+  res.status(200).send("ok");
+});
+
 module.exports = router;
