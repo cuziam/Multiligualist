@@ -30,10 +30,12 @@ const createSessionConfig = (sessionStore) => {
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
+      name: "session",
       httpOnly: false,
       secure: true,
       maxAge: 1000 * 60 * 60 * 24 * 7, //쿠키의 유효기간 7일
       sameSite: "lax",
+      domain: ".translators24.com",
     },
   };
 };
