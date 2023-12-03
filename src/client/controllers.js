@@ -27,7 +27,7 @@ class UiController {
 
     //main-flex event listeners(toolbar관련)
     document.querySelector("#main-flex").addEventListener("click", (event) => {
-      if (event.target.matches("#icon-copy")) {
+      if (event.target.matches("#icon-copy, #icon-copy *")) {
         this.util.copyText(event.target);
       } else if (event.target.matches("#icon-history, #icon-history *")) {
         this.clientView.displayHistory(
