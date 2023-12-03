@@ -11,13 +11,13 @@ const {
   translateClientReq,
   sendEvents,
 } = require("../src/server/get-api-response");
-const { sessionMiddleware } = require("../src/server/session-controller");
+const { createSession } = require("../src/server/session-controller");
 router.use(cookieParser()); //쿠키 파서 미들웨어
-router.use(sessionMiddleware); //세션 미들웨어
 
 router.get("/", async (req, res) => {
   // 세션에 사용량 정보 저장
   if (req.session._id === undefined) {
+    createSession();
     req.session.maxUsage = 20000;
     req.session.usage = 0;
     await req.session.save();
