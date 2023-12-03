@@ -27,7 +27,7 @@ const createSessionConfig = (sessionStore) => {
   return {
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: sessionStore,
     cookie: {
       name: "session",
@@ -43,10 +43,10 @@ const createSessionConfig = (sessionStore) => {
 const sessionStore = createSessionStore();
 const sessionConfig = createSessionConfig(sessionStore);
 const sessionMiddleware = (req, res, next) => {
-  if (req.path !== "/") {
-    next();
-  } else {
+  if (req.path === "/" || req.path === "/translate") {
     session(sessionConfig)(req, res, next);
+  } else {
+    next();
   }
 };
 
