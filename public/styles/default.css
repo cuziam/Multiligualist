@@ -637,6 +637,10 @@ footer div {
   }
   .output-box-toggle-off {
     width: 100%;
+    padding: 0.25rem;
+  }
+  .output-box-toggle-off > * {
+    width: 100%;
   }
   .output-box-toggle-on > * {
     width: 100%;
