@@ -27,11 +27,11 @@ const createSessionConfig = (sessionStore) => {
   return {
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     store: sessionStore,
     cookie: {
       name: "session",
-      httpOnly: false,
+      httpOnly: true,
       secure: false,
       maxAge: 1000 * 60 * 60 * 24 * 7, //쿠키의 유효기간 7일
       sameSite: "lax",
