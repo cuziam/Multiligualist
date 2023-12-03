@@ -13,14 +13,13 @@ const {
 } = require("../src/server/get-api-response");
 const { createSession } = require("../src/server/session-controller");
 router.use(cookieParser()); //쿠키 파서 미들웨어
-
-router.use("/", sessionMiddleware); //세션 미들웨어
+router.use(createSession); //세션 미들웨어
 router.get("/", async (req, res) => {
-  // 세션에 사용량 정보 저장
-  if (req.session._id === undefined) {
-    createSession();
+  // 요청에 세션 쿠키가 없으면 세션을 새로 생성한다.
+  if (!req.session.initialized) {
     req.session.maxUsage = 20000;
     req.session.usage = 0;
+    req.session.initialized = true;
     await req.session.save();
   }
   const preferredLanguages = req.acceptsLanguages();
@@ -39,22 +38,23 @@ router.get("/events", (req, res) => {
 router.post("/translate", async (req, res) => {
   const data = req.body;
   const usageLength = data[0].srcText.length;
+  if (req.session.initialized) {
+    try {
+      const results = await translateClientReq(data);
+      const successfulTranslations = results.filter((result) => result).length;
+      const totalUsage = successfulTranslations * usageLength;
 
-  try {
-    const results = await translateClientReq(data);
-    const successfulTranslations = results.filter((result) => result).length;
-    const totalUsage = successfulTranslations * usageLength;
+      if (req.session.usage + totalUsage >= req.session.maxUsage) {
+        res.status(403).send("usage limit exceeded");
+        return;
+      }
 
-    if (req.session.usage + totalUsage >= req.session.maxUsage) {
-      res.status(403).send("usage limit exceeded");
-      return;
+      req.session.usage += totalUsage;
+      await req.session.save();
+      res.status(200).send("ok");
+    } catch (error) {
+      res.status(500).send("Internal server error");
     }
-
-    req.session.usage += totalUsage;
-    await req.session.save();
-    res.status(200).send("ok");
-  } catch (error) {
-    res.status(500).send("Internal server error");
   }
 });
 
