@@ -42,8 +42,8 @@ const createSessionConfig = (sessionStore) => {
 
 const sessionStore = createSessionStore();
 const sessionConfig = createSessionConfig(sessionStore);
-const sessionMiddleware = session(sessionConfig);
+const createSession = session(sessionConfig);
 
 module.exports = {
-  sessionMiddleware,
+  createSession,
 };
