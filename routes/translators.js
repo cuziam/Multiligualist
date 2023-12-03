@@ -11,9 +11,10 @@ const {
   translateClientReq,
   sendEvents,
 } = require("../src/server/get-api-response");
-const { createSession } = require("../src/server/session-controller");
+const { sessionMiddleware } = require("../src/server/session-controller");
 router.use(cookieParser()); //쿠키 파서 미들웨어
-router.use(createSession); //세션 미들웨어
+router.use(sessionMiddleware); //세션 미들웨어
+
 router.get("/", async (req, res) => {
   // 요청에 세션 쿠키가 없으면 세션을 새로 생성한다.
   if (!req.session.initialized) {

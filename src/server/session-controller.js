@@ -42,8 +42,14 @@ const createSessionConfig = (sessionStore) => {
 
 const sessionStore = createSessionStore();
 const sessionConfig = createSessionConfig(sessionStore);
-const createSession = session(sessionConfig);
+const sessionMiddleware = (req, res, next) => {
+  if (req.path !== "/") {
+    next();
+  } else {
+    session(sessionConfig)(req, res, next);
+  }
+};
 
 module.exports = {
-  createSession,
+  sessionMiddleware,
 };
