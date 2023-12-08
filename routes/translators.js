@@ -41,6 +41,7 @@ router.post("/translate", async (req, res) => {
   const usageLength = data[0].srcText.length;
   if (req.session.initialized) {
     try {
+      console.log("POST /translate");
       const results = await translateClientReq(data);
       const successfulTranslations = results.filter((result) => result).length;
       const totalUsage = successfulTranslations * usageLength;
