@@ -11,17 +11,22 @@ const {
 const xss = require("xss");
 
 function sendEvents(req, res) {
+  //응답 헤더 기본값 설정
   res.writeHead(200, {
     "Content-Type": "text/event-stream",
     "Cache-Control": "no-cache",
     Connection: "keep-alive",
   });
+  //응답 헤더에 이벤트스트림을 보내는 함수를 추가
   const onTranslationUpdate = (data) => {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
   };
   translationEvents.on("update", onTranslationUpdate);
+
+  //클라이언트가 연결을 끊으면 이벤트리스너를 제거
   res.on("close", () => {
     translationEvents.removeListener("update", onTranslationUpdate);
+    res.end();
   });
 }
 
@@ -184,7 +189,11 @@ const translateClientReq = async function (reqBody) {
     }
     translationResults.push(result);
   }
-
+  translationEvents.emit("update", [
+    {
+      message: "done",
+    },
+  ]);
   return translationResults;
 };
 

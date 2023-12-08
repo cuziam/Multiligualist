@@ -41,13 +41,12 @@ router.post("/translate", async (req, res) => {
   const usageLength = data[0].srcText.length;
   if (req.session.initialized) {
     try {
-      console.log("POST /translate");
       const results = await translateClientReq(data);
       const successfulTranslations = results.filter((result) => result).length;
       const totalUsage = successfulTranslations * usageLength;
 
       if (req.session.usage + totalUsage >= req.session.maxUsage) {
-        res.status(403).send("usage limit exceeded");
+        res.status(403).send("Forbidden: usage limit exceeded");
         return;
       }
 

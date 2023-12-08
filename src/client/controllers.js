@@ -87,6 +87,10 @@ class AjaxController {
     const data = JSON.parse(e.data);
     //일단 데이터를 받아서 콘솔에 출력하는 것으로 테스트
     console.log("번역 결과: ", data);
+    if (data[0].message === "done") {
+      this.eventSource.close();
+      return;
+    }
 
     //데이터를 받아서 index와 일치하는 outputConfig의 targetText를 업데이트
     const { index, targetText } = data[0];
@@ -107,9 +111,9 @@ class AjaxController {
       this.eventSource.close();
     }
 
-    //새로운 eventSource를 생성.(SSE를 받을 엔드포인트는 /events)
+    //새로운 eventSource를 생성하고 이벤트 소스에 메세지가 전달되면 번역결과 적용
+    //(SSE를 받을 엔드포인트는 /events)
     this.eventSource = new EventSource("/events");
-
     this.eventSource.onmessage = this.applyTranslationResult.bind(this);
 
     // inputConfig, outputConfigs를 활용하여 dataToSendArr을 만듦
