@@ -8,7 +8,7 @@ module.exports = {
     filename: "bundle.js", // 생성될 번들 파일의 이름
     path: path.resolve(__dirname, "public/dist"), // 번들 파일이 저장될 경로
   },
-  mode: "development", // 'development'로 설정할 수도 있습니다.,
+  mode: "production", // 'development'로 설정할 수도 있습니다.,
   optimization: {
     minimize: true,
     minimizer: [
