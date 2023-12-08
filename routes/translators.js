@@ -21,6 +21,7 @@ router.get("/", async (req, res) => {
     req.session.maxUsage = 20000;
     req.session.usage = 0;
     req.session.initialized = true;
+    req.session.userAgent = req.headers["user-agent"] || "";
     await req.session.save();
   }
   const preferredLanguages = req.acceptsLanguages();
