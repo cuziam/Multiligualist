@@ -11,11 +11,11 @@ const MongodbStore = require("connect-mongodb-session")(session);
 const createSessionStore = () => {
   try {
     const mongodbStore = new MongodbStore({
-      uri: "mongodb://127.0.0.1:27017",
+      uri: process.env.MONGODB_URL,
       databaseName: "translators",
       collection: "session",
     });
-    console.log("mongodbStore 생성");
+    console.log("mongodbStore 연결 성공");
     return mongodbStore;
   } catch (err) {
     console.log(err);
