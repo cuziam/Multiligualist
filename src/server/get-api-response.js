@@ -17,13 +17,21 @@ function sendEvents(req, res) {
     "Cache-Control": "no-cache",
     Connection: "keep-alive",
   });
-  //응답 헤더에 이벤트스트림을 보내는 함수를 추가
+
+  //이벤트 리스너 콜백함수
   const onTranslationUpdate = (data) => {
+    if (data[0].message === "done") {
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+      res.end();
+      return;
+    }
     res.write(`data: ${JSON.stringify(data)}\n\n`);
   };
+
+  //이벤트리스너를 추가
   translationEvents.on("update", onTranslationUpdate);
 
-  //클라이언트가 연결을 끊으면 이벤트리스너를 제거
+  //만약 클라이언트가 연결을 끊으면 이벤트리스너를 제거
   res.on("close", () => {
     translationEvents.removeListener("update", onTranslationUpdate);
     res.end();
