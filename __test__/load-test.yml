@@ -1,0 +1,36 @@
+config:
+  target: "https://www.translators24.com" # 애플리케이션의 URL
+  phases:
+    - duration: 5 # 테스트 지속 시간 (초)
+      arrivalRate: 1 # 초당 새 사용자 수
+      maxVusers: 2 # 최대 사용자 수
+
+    - pause: 10 # 테스트 중지 시간(초)
+
+    - duration: 5 # 테스트 지속 시간 (초)
+      arrivalRate: 5 # 초당 새 사용자 수
+      maxVusers: 10 # 최대 사용자 수
+
+    - pause: 10 # 테스트 중지 시간(초)
+
+scenarios:
+  - flow:
+      - get:
+          url: "/" # 애플리케이션의 루트 경로
+      - post:
+          url: "/translate" # 번역 요청 경로
+          json:
+            - {
+                index: 0,
+                srcLang: "Korean",
+                srcText: "안녕",
+                targetLang: "English (American)",
+                targetTool: "Google Translator",
+              }
+            - {
+                index: 1,
+                srcLang: "Korean",
+                srcText: "안녕",
+                targetLang: "English (American)",
+                targetTool: "DeepL",
+              }
