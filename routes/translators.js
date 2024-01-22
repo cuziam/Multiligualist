@@ -12,8 +12,17 @@ const {
   sendEvents,
 } = require("../src/server/get-api-response");
 const { sessionMiddleware } = require("../src/server/session-controller");
+
+//미들웨어 사용
 router.use(cookieParser()); //쿠키 파서 미들웨어
 router.use(sessionMiddleware); //세션 미들웨어
+
+router.use((req, res, next) => {
+  //cors 허용
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  next();
+});
 
 router.get("/", async (req, res) => {
   // 요청에 세션 쿠키가 없으면 세션을 새로 생성한다.
@@ -24,25 +33,29 @@ router.get("/", async (req, res) => {
     req.session.userAgent = req.headers["user-agent"] || "";
     await req.session.save();
   }
+  // 언어 설정
   const preferredLanguages = req.acceptsLanguages();
   res.locals.preferredLanguage =
     ISOCodeToLanguage(preferredLanguages[0]) ||
     ISOCodeToLanguage(preferredLanguages[1]) ||
     ISOCodeToLanguage(preferredLanguages[2]) ||
     "English";
+  // 언어 설정 끝
   res.render("landing-page");
 });
 
 router.get("/events", (req, res) => {
+  // 이벤트 스트림을 보내는 라우터
   sendEvents(req, res);
 });
 
 router.post("/translate", async (req, res) => {
+  console.log("translate post request");
+  console.log("req.body: ", req.body);
   const data = req.body;
   const usageLength = data[0].srcText.length;
   if (req.session.initialized) {
     try {
-      const results = await translateClientReq(data);
       const successfulTranslations = results.filter((result) => result).length;
       const totalUsage = successfulTranslations * usageLength;
 
@@ -54,6 +67,14 @@ router.post("/translate", async (req, res) => {
       req.session.usage += totalUsage;
       await req.session.save();
       res.status(200).send("ok");
+    } catch (error) {
+      res.status(500).send("Internal server error");
+    }
+  } else {
+    //세션이 초기화되지 않았을 때
+    try {
+      const results = await translateClientReq(data);
+      res.status(200).send("translation complete");
     } catch (error) {
       res.status(500).send("Internal server error");
     }
