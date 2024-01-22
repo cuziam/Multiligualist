@@ -1,6 +1,4 @@
 require("dotenv").config(); //.env파일을 읽어서 process.env에 넣어줌
-
-const axios = require("axios");
 const { EventEmitter } = require("events");
 const translationEvents = new EventEmitter();
 const {
@@ -8,6 +6,11 @@ const {
   ISOCodeToLanguage,
   ISOCodeForTargetTool,
 } = require("./util");
+
+//통신 패키지
+const axios = require("axios");
+
+//보안
 const xss = require("xss");
 
 function sendEvents(req, res) {
@@ -21,8 +24,7 @@ function sendEvents(req, res) {
   //이벤트 리스너 콜백함수
   const onTranslationUpdate = (data) => {
     if (data[0].message === "done") {
-      res.write(`data: ${JSON.stringify(data)}\n\n`);
-      res.end();
+      res.status(200).end();
       return;
     }
     res.write(`data: ${JSON.stringify(data)}\n\n`);
@@ -38,7 +40,7 @@ function sendEvents(req, res) {
   });
 }
 
-//post요청이 /으로 들어오면 papago api로 데이터들을 보내고 응답을 받은 후에 응답내용을 클라이언트에게 보내준다.
+//papago 번역 api
 const translatePapago = async function (index, srcText, srcLang, targetLang) {
   console.log(srcText, srcLang, targetLang);
   const clientId = process.env.X_NCP_APIGW_API_KEY_ID;
@@ -68,6 +70,7 @@ const translatePapago = async function (index, srcText, srcLang, targetLang) {
       {
         index: index,
         srcLang: ISOCodeToLanguage(srcLang),
+        srcText: srcText,
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: response.data.message.result.translatedText,
         targetTool: "Papago",
@@ -86,6 +89,7 @@ const translatePapago = async function (index, srcText, srcLang, targetLang) {
       {
         index: index,
         srcLang: ISOCodeToLanguage(srcLang),
+        srcText: srcText,
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: textToSend,
         targetTool: "Papago",
@@ -95,6 +99,7 @@ const translatePapago = async function (index, srcText, srcLang, targetLang) {
   }
 };
 
+//구글 번역 api
 const { TranslationServiceClient } = require("@google-cloud/translate");
 const translationClient = new TranslationServiceClient();
 
@@ -116,6 +121,7 @@ const translateGoogle = async function (index, srcText, srcLang, targetLang) {
       {
         index: index,
         srcLang: ISOCodeToLanguage(srcLang),
+        srcText: srcText,
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: response.translations[0].translatedText,
         targetTool: "Google Translator",
@@ -127,6 +133,7 @@ const translateGoogle = async function (index, srcText, srcLang, targetLang) {
       {
         index: index,
         srcLang: ISOCodeToLanguage(srcLang),
+        srcText: srcText,
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: error.details,
         targetTool: "Google Translator",
@@ -136,6 +143,7 @@ const translateGoogle = async function (index, srcText, srcLang, targetLang) {
   }
 };
 
+//deepl 번역 api
 const deepl = require("deepl-node");
 const authKey = process.env.DEEPL_AUTH_KEY;
 const translator = new deepl.Translator(authKey);
@@ -152,6 +160,7 @@ const translateDeepl = async function (index, srcText, srcLang, targetLang) {
       {
         index: index,
         srcLang: ISOCodeToLanguage(srcLang),
+        srcText: srcText,
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: response.text,
         targetTool: "DeepL",
@@ -163,6 +172,7 @@ const translateDeepl = async function (index, srcText, srcLang, targetLang) {
       {
         index: index,
         srcLang: ISOCodeToLanguage(srcLang),
+        srcText: srcText,
         targetLang: ISOCodeToLanguage(targetLang),
         targetText: error.message,
         targetTool: "DeepL",
@@ -173,27 +183,34 @@ const translateDeepl = async function (index, srcText, srcLang, targetLang) {
 };
 
 const translateClientReq = async function (reqBody) {
+  console.log("translateClientReq");
   const translationResults = [];
 
   for (const config of reqBody) {
     let { srcLang, srcText, targetLang, targetTool, index } = config;
     srcLang = languageToISOCode(srcLang);
-    targetLang = languageToISOCode(targetLang);
     srcText = xss(srcText);
+    targetLang = languageToISOCode(targetLang);
 
     let result;
-    if (targetTool === "Papago") {
-      result = await translatePapago(index, srcText, srcLang, targetLang)
-        .then(() => true)
-        .catch(() => false);
-    } else if (targetTool === "Google Translator") {
-      result = await translateGoogle(index, srcText, srcLang, targetLang)
-        .then(() => true)
-        .catch(() => false);
-    } else if (targetTool === "DeepL") {
-      result = await translateDeepl(index, srcText, srcLang, targetLang)
-        .then(() => true)
-        .catch(() => false);
+    switch (targetTool) {
+      case "Papago":
+        result = await translatePapago(index, srcText, srcLang, targetLang)
+          .then(() => true)
+          .catch(() => false);
+        break;
+      case "Google":
+        result = await translateGoogle(index, srcText, srcLang, targetLang)
+          .then(() => true)
+          .catch(() => false);
+        break;
+      case "DeepL":
+        result = await translateDeepl(index, srcText, srcLang, targetLang)
+          .then(() => true)
+          .catch(() => false);
+        break;
+      default:
+        break;
     }
     translationResults.push(result);
   }
