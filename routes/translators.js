@@ -33,15 +33,8 @@ router.get("/", async (req, res) => {
     req.session.userAgent = req.headers["user-agent"] || "";
     await req.session.save();
   }
-  // 언어 설정
-  const preferredLanguages = req.acceptsLanguages();
-  res.locals.preferredLanguage =
-    ISOCodeToLanguage(preferredLanguages[0]) ||
-    ISOCodeToLanguage(preferredLanguages[1]) ||
-    ISOCodeToLanguage(preferredLanguages[2]) ||
-    "English";
-  // 언어 설정 끝
-  res.render("landing-page");
+  //index.html 보내기
+  res.sendFile("index.html");
 });
 
 router.get("/events", (req, res) => {
