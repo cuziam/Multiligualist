@@ -24,7 +24,8 @@ function sendEvents(req, res) {
   //이벤트 리스너 콜백함수
   const onTranslationUpdate = (data) => {
     if (data[0].message === "done") {
-      res.status(200).end();
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+      res.end();
       return;
     }
     res.write(`data: ${JSON.stringify(data)}\n\n`);
@@ -214,11 +215,7 @@ const translateClientReq = async function (reqBody) {
     }
     translationResults.push(result);
   }
-  translationEvents.emit("update", [
-    {
-      message: "done",
-    },
-  ]);
+
   return translationResults;
 };
 

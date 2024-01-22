@@ -49,6 +49,7 @@ router.post("/translate", async (req, res) => {
   const usageLength = data[0].srcText.length;
   if (req.session.initialized) {
     try {
+      const results = await translateClientReq(data);
       const successfulTranslations = results.filter((result) => result).length;
       const totalUsage = successfulTranslations * usageLength;
 
@@ -64,7 +65,7 @@ router.post("/translate", async (req, res) => {
       res.status(500).send("Internal server error");
     }
   } else {
-    //세션이 초기화되지 않았을 때
+    //세션이 초기화되지 않았을 때(클라이언트를 따로 개발 중일 때 사용 할 코드)
     try {
       const results = await translateClientReq(data);
       res.status(200).send("translation complete");
