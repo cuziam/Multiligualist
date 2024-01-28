@@ -6,9 +6,12 @@ const openai = new OpenAI({
 
 const systemSettingMessage = {
   role: "system",
-  content:
-    "You are a helpful AI assistant. you don't need greetings and just answer the question.",
+  content: `You are a helpful AI assistant.
+    Do not repeat the same answer.
+    At first, Use the user's native language.
+    `,
 };
+
 const userHistories = {}; //temp db
 //detect client message and send to AI server
 async function handleClientMessage(socket) {
@@ -19,15 +22,15 @@ async function handleClientMessage(socket) {
   socket.on("clientMessage", async (message, callback) => {
     console.log("클라이언트 메시지를 받았습니다.");
     const userHistory = userHistories[socket.id];
-    console.log("userHistory", userHistory);
+    userHistory.push({ role: "user", content: message }); //db에 업데이트
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: userHistory,
-      max_tokens: 700,
+      max_tokens: 500,
     });
 
     const aiServerMessage = completion.choices[0].message;
-    userHistory.push({ role: "user", content: message }, aiServerMessage); //db에 업데이트
+    userHistory.push(aiServerMessage); //db에 업데이트
     console.log("userHistory", userHistory);
     callback(aiServerMessage.content);
   });
