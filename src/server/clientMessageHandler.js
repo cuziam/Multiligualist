@@ -23,16 +23,23 @@ async function handleClientMessage(socket) {
     console.log("클라이언트 메시지를 받았습니다.");
     const userHistory = userHistories[socket.id];
     userHistory.push({ role: "user", content: message }); //db에 업데이트
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: userHistory,
-      max_tokens: 500,
-    });
-
-    const aiServerMessage = completion.choices[0].message;
-    userHistory.push(aiServerMessage); //db에 업데이트
-    console.log("userHistory", userHistory);
-    callback(aiServerMessage.content);
+    try {
+      const completion = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: userHistory,
+        max_tokens: 500,
+      });
+      const aiServerMessage = completion.choices[0].message;
+      userHistory.push(aiServerMessage); //db에 업데이트
+      console.log("userHistory", userHistory);
+      callback(aiServerMessage.content);
+    } catch {
+      userHistory.push({
+        role: "system",
+        content: "AI 서버가 응답하지 않습니다.",
+      });
+      callback("AI 서버가 응답하지 않습니다.");
+    }
   });
   socket.on("disconnect", () => {
     console.log("클라이언트 연결이 끊어졌습니다. 기록을 삭제합니다.");
